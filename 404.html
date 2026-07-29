@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 页面已失联 | Telegram 群聊互助展示名单（水水版）</title>
+    <style>
+        :root {
+            --accent-blue: #0088cc;
+            --accent-cyan: #00d2ff;
+            --accent-glow: rgba(0, 210, 255, 0.35);
+            --bg-dark: #0b0f19;
+            --card-bg: rgba(18, 24, 38, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border-radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 动态背景背景光圈 */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 550px;
+            height: 550px;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: -1;
+            opacity: 0.22;
+            pointer-events: none;
+        }
+        body::before {
+            background: #0088cc;
+            top: -100px;
+            left: -100px;
+        }
+        body::after {
+            background: #7928ca;
+            bottom: -100px;
+            right: -100px;
+        }
+
+        .container {
+            max-width: 580px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* 404 玻璃大卡片 */
+        .error-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            padding: 3.5rem 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 136, 204, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+        }
+
+        /* 动画元素：纸飞机偏航 */
+        .illustration {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .plane-icon {
+            width: 80px;
+            height: 80px;
+            fill: url(#cyan-gradient);
+            filter: drop-shadow(0 10px 20px rgba(0, 210, 255, 0.4));
+            animation: floatPlane 4s ease-in-out infinite;
+        }
+
+        @keyframes floatPlane {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-12px) rotate(-8deg);
+            }
+        }
+
+        /* 404 炫彩大标题 */
+        .error-code {
+            font-size: 5.5rem;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .error-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.8rem;
+        }
+
+        .error-desc {
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        /* 按钮组 */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.75rem;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* 主按钮 */
+        .btn-primary {
+            background: linear-gradient(135deg, #0088cc 0%, #00aaff 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0099e6 0%, #1ab5ff 100%);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* 次要按钮 */
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(0, 210, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="error-card">
+        <!-- SVG 图标定义 -->
+        <svg style="width:0;height:0;position:absolute;" aria-hidden="true">
+            <defs>
+                <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0088cc" />
+                    <stop offset="100%" stop-color="#00d2ff" />
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <div class="illustration">
+            <!-- 偏航的 Telegram 纸飞机 SVG -->
+            <svg class="plane-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.05-.75 4.12-1.79 6.87-2.97 8.25-3.54 3.92-1.63 4.73-1.92 5.26-1.93.12 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.16-.04.25z"/>
+            </svg>
+        </div>
+
+        <div class="error-code">404</div>
+        <h1 class="error-title">信号中断，页面失联 awa</h1>
+        <p class="error-desc">你访问的页面可能已经被移走、删除，或者该群聊互助链接已失效。</p>
+
+        <div class="btn-group">
+            <a href="index.html" class="btn btn-primary">
+                <!-- 首页 Icon -->
+                <svg class="btn-icon" viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                返回展示名单
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <!-- 返回 Icon -->
+                <svg class="btn-icon" viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                返回上一页
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
