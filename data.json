@@ -40,5 +40,12 @@
     "owner": "Chisato",
     "type": "pd",
     "link": "https://t.me/waterchisato"
+  },
+  {
+    "id": 7,
+    "groupName": "(QQ)防骗交流群",
+    "owner": "Null",
+    "type" : "ql",
+    "link": "https://qm.qq.com/q/jF0iE2Z7Mc"
   }
 ]
