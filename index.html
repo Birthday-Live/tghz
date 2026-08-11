@@ -40,7 +40,11 @@
             }
         }
 
-        var BOT_URL = 'tg://resolve?domain=shuishui_tghzbot';
+        // 参考 Telegram 官方 t.me 页面的深链唤起方法：
+        // 1) 隐藏 iframe 静默加载 tg:// 深链唤起 App —— 不报错、不残留协议串、地址栏不变；
+        // 2) 2 秒内页面未被切走（pagehide/blur 未触发）= 没唤起成功，再新标签打开 t.me 网页兜底
+        var PROTO_URL = 'tg://resolve?domain=shuishui_tghzbot';
+        var PAGE_URL = 'https://t.me/shuishui_tghzbot';
 
         // 被拦截：在页面最顶层铺一个全屏不透明遮罩，明确显示"不支持"。
         // 不用 document.write 覆盖文档（部分内核会把写入内容与原网页混着渲染，导致提示下方露出原网页）；
@@ -60,21 +64,37 @@
             return;
         }
 
-        // 正常浏览器：尝试新开界面跳转 Telegram 机器人
+        // 正常浏览器：参考 Telegram 官方方法唤起 App / 兜底跳转
         function tryOpenBot() {
-            var win = null;
-            try { win = window.open(BOT_URL, '_blank'); } catch (e) { win = null; }
-            if (!win) {
-                // 新标签页可能被拦截：页面底部给出手动入口
-                var tip = document.createElement('div');
-                tip.style.cssText = 'position:fixed;left:50%;bottom:1rem;transform:translateX(-50%);z-index:99999;' +
-                    'background:rgba(18,24,38,.96);border:1px solid rgba(0,210,255,.45);color:#f1f5f9;' +
-                    'padding:.8rem 1.2rem;border-radius:14px;font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.5);' +
-                    'text-align:center;font-family:-apple-system,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;';
-                tip.innerHTML = '若未自动打开 Telegram，<a href="' + BOT_URL + '" target="_blank" rel="noopener" ' +
-                    'style="color:#00d2ff;font-weight:600;text-decoration:none;">点此前往 👉</a>';
-                document.body.appendChild(tip);
-            }
+            var pageHidden = false;
+            window.addEventListener('pagehide', function () { pageHidden = true; }, false);
+            window.addEventListener('blur', function () { pageHidden = true; }, false);
+
+            // 官方同款：隐藏 iframe 静默加载深链唤起 App（唤起失败也无声无息，不影响地址栏）
+            try {
+                var iframe = document.createElement('iframe');
+                iframe.style.cssText = 'position:fixed;width:0;height:0;border:0;visibility:hidden;';
+                iframe.src = PROTO_URL;
+                document.body.appendChild(iframe);
+            } catch (e) { /* 忽略 */ }
+
+            // 2 秒后页面还在 = App 未被唤起 → 新标签打开 t.me 网页兜底（地址栏干净，不会残留协议串）
+            setTimeout(function () {
+                if (pageHidden) return;
+                var win = null;
+                try { win = window.open(PAGE_URL, '_blank'); } catch (e) { win = null; }
+                if (!win) {
+                    // 弹窗被拦截：页面底部给出手动入口
+                    var tip = document.createElement('div');
+                    tip.style.cssText = 'position:fixed;left:50%;bottom:1rem;transform:translateX(-50%);z-index:99999;' +
+                        'background:rgba(18,24,38,.96);border:1px solid rgba(0,210,255,.45);color:#f1f5f9;' +
+                        'padding:.8rem 1.2rem;border-radius:14px;font-size:.85rem;box-shadow:0 8px 30px rgba(0,0,0,.5);' +
+                        'text-align:center;font-family:-apple-system,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;';
+                    tip.innerHTML = '若未自动打开 Telegram，<a href="' + PAGE_URL + '" target="_blank" rel="noopener" ' +
+                        'style="color:#00d2ff;font-weight:600;text-decoration:none;">点此前往 👉</a>';
+                    document.body.appendChild(tip);
+                }
+            }, 2000);
         }
 
         if (document.readyState === 'loading') {
