@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>社群公约与碎碎念指南</title>
+    <style>
+        /* ================= 全局变量定义 ================= */
+        :root {
+            --bg-color: #fcfcfc;
+            --text-main: #1d1d1f;
+            --text-muted: #86868b;
+            --card-bg: #ffffff;
+            --border-color: #f5f5f7;
+            
+            /* 状态主题色 */
+            --accent-pink: #fb7299;
+            --accent-blue: #00aeec;
+            --accent-green: #00c853;
+            --accent-orange: #ff9500;
+            --accent-purple: #af52de;
+
+            /* 柔和浅背景 (用于卡片内警示块) */
+            --badge-pink-bg: rgba(251, 114, 153, 0.1);
+            --badge-blue-bg: rgba(0, 174, 236, 0.1);
+            --badge-orange-bg: rgba(255, 149, 0, 0.1);
+            --badge-green-bg: rgba(0, 200, 83, 0.1);
+            --badge-purple-bg: rgba(175, 82, 222, 0.1);
+            
+            /* 按钮颜色配置 */
+            --btn-secondary-bg: #f5f5f7;
+            --btn-secondary-hover: #e8e8ed;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --text-main: #f5f5f7;
+                --text-muted: #86868b;
+                --card-bg: #1c1c1e;
+                --border-color: #2c2c2e;
+
+                --badge-pink-bg: rgba(251, 114, 153, 0.15);
+                --badge-blue-bg: rgba(0, 174, 236, 0.15);
+                --badge-orange-bg: rgba(255, 149, 0, 0.15);
+                --badge-green-bg: rgba(0, 200, 83, 0.15);
+                --badge-purple-bg: rgba(175, 82, 222, 0.15);
+
+                --btn-secondary-bg: #2c2c2e;
+                --btn-secondary-hover: #3a3a3c;
+            }
+        }
+
+        /* 基础重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            transition: background-color 0.5s ease;
+            padding: 40px 20px;
+        }
+
+        /* 主容器 */
+        .container {
+            width: 100%;
+            max-width: 460px;
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 头部 */
+        .header {
+            margin-bottom: 24px;
+            padding: 0 4px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        /* 规则列表 */
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* 规则卡片 */
+        .rule-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .rule-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+        }
+
+        /* 卡片头部：圆点、标题与违规标签 */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        /* 右侧轻量状态标签 */
+        .tag {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+
+        .tag-danger {
+            color: var(--accent-pink);
+            background-color: var(--badge-pink-bg);
+        }
+
+        .tag-warning {
+            color: var(--accent-orange);
+            background-color: var(--badge-orange-bg);
+        }
+
+        .tag-info {
+            color: var(--accent-blue);
+            background-color: var(--badge-blue-bg);
+        }
+
+        .tag-success {
+            color: var(--accent-green);
+            background-color: var(--badge-green-bg);
+        }
+
+        .tag-purple {
+            color: var(--accent-purple);
+            background-color: var(--badge-purple-bg);
+        }
+
+        /* 卡片正文描述 */
+        .card-body {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            padding-left: 18px; /* 对齐圆点右侧 */
+        }
+
+        /* 高亮文字 */
+        .card-body strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .card-body em {
+            font-style: normal;
+            color: var(--text-main);
+        }
+
+        /* 底部操作按钮组 */
+        .action-group {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 主按钮 (加入频道) */
+        .btn-primary {
+            background-color: var(--text-main);
+            color: var(--bg-color);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* 次按钮 (回到机器人) */
+        .btn-secondary {
+            background-color: var(--btn-secondary-bg);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--btn-secondary-hover);
+        }
+
+        /* 页脚声明 */
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 10px;
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>群规与公约</h1>
+            <p>本群宗旨：碎碎念小窝，大家随意开心就好</p>
+        </header>
+
+        <!-- 规则列表 -->
+        <main class="rules-list">
+
+            <!-- 规则 4 & 11 主旨大意 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-green);"></span>
+                        <h2 class="title">1. 建群主旨</h2>
+                    </div>
+                    <span class="tag tag-success">轻松随意</span>
+                </div>
+                <div class="card-body">
+                    本群建群主旨其实就是<strong>碎碎念</strong>，没什么大主题，大家随意一点就行。凑数的规则：希望大家玩的开心，吃的开心，过的开心！
+                </div>
+            </article>
+
+            <!-- 规则 1 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-pink);"></span>
+                        <h2 class="title">2. 内容分享底线</h2>
+                    </div>
+                    <span class="tag tag-danger">严禁红线</span>
+                </div>
+                <div class="card-body">
+                    本群虽然不禁止 NSFW，但是希望大家能看点正常的。基本红线是 <strong>18G</strong> 和涉及<strong>三次元的幼态审美</strong>（不过平常好像也没人发）。
+                </div>
+            </article>
+
+            <!-- 规则 2 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-orange);"></span>
+                        <h2 class="title">3. 禁止争吵引战</h2>
+                    </div>
+                    <span class="tag tag-warning">友情维护</span>
+                </div>
+                <div class="card-body">
+                    不要打架不要打架，金克拉，好处都有啥，谁说对了就给他（总之就是不要吵架，<strong>引战的话会被群主杀掉的</strong>）。
+                </div>
+            </article>
+
+            <!-- 规则 3 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-purple);"></span>
+                        <h2 class="title">4. 广告与宣传限制</h2>
+                    </div>
+                    <span class="tag tag-purple">私聊商务</span>
+                </div>
+                <div class="card-body">
+                    本群禁止任何形式的广告链接。如果你有什么想宣传的可以私下和群主说一下，<strong>我们谈个价格（</strong>
+                </div>
+            </article>
+
+            <!-- 规则 5 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-pink);"></span>
+                        <h2 class="title">5. AI 技术讨论边界</h2>
+                    </div>
+                    <span class="tag tag-danger">严禁违规</span>
+                </div>
+                <div class="card-body">
+                    本群禁止宣传任何 <strong>AI 脱衣、换脸</strong> 之类的技术交流；正常的学术研究是鼓励的。
+                </div>
+            </article>
+
+            <!-- 规则 7 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-blue);"></span>
+                        <h2 class="title">6. 倾诉与健康关心</h2>
+                    </div>
+                    <span class="tag tag-info">身体第一</span>
+                </div>
+                <div class="card-body">
+                    如果你在现实里遇到的问题想要倾诉，本群不排斥这种行为，毕竟现在的日子大家都不算好过。但是如果你遇到的是<strong>身体不舒服的情况还在群里蛐蛐不去看病，群主会把你一脚踢飞的——</strong>
+                </div>
+            </article>
+
+            <!-- 规则 8 & 9 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-orange);"></span>
+                        <h2 class="title">7. 话题道德与法律底线</h2>
+                    </div>
+                    <span class="tag tag-warning">理性交流</span>
+                </div>
+                <div class="card-body">
+                    本群不鼓励鉴证，<strong>小聊怡情，大聊扑街</strong>。不要在群里散播或交流令人不适、挑战道德法律底线的话题。
+                </div>
+            </article>
+
+            <!-- 规则 6 & 10 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-purple);"></span>
+                        <h2 class="title">8. 反馈与解释权</h2>
+                    </div>
+                    <span class="tag tag-purple">联系群主</span>
+                </div>
+                <div class="card-body">
+                    如果你有任何需要反馈的，请<strong>私信群主</strong>并讲述你遇到的问题。最终解释权归群主所有——
+                </div>
+            </article>
+
+        </main>
+
+        <!-- 底部跳转按钮 -->
+        <div class="action-group">
+            <a href="https://t.me/Lovely_Icey" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                加入频道
+            </a>
+            <a href="https://t.me/shuishui_tghzbot?start=5" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                回到机器人
+            </a>
+        </div>
+
+        <footer class="footer">
+            最终解释权归群主所有 · 祝大家玩的开心
+        </footer>
+    </div>
+
+</body>
+</html>
