@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>水水的社群公约与行为准则</title>
+    <style>
+        /* ================= 全局变量定义 ================= */
+        :root {
+            --bg-color: #fcfcfc;
+            --text-main: #1d1d1f;
+            --text-muted: #86868b;
+            --card-bg: #ffffff;
+            --border-color: #f5f5f7;
+            
+            /* 状态主题色 */
+            --accent-pink: #fb7299;
+            --accent-blue: #00aeec;
+            --accent-green: #00c853;
+            --accent-orange: #ff9500;
+
+            /* 柔和浅背景 (用于卡片内警示块) */
+            --badge-pink-bg: rgba(251, 114, 153, 0.1);
+            --badge-blue-bg: rgba(0, 174, 236, 0.1);
+            --badge-orange-bg: rgba(255, 149, 0, 0.1);
+            
+            /* 按钮颜色配置 */
+            --btn-secondary-bg: #f5f5f7;
+            --btn-secondary-hover: #e8e8ed;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --text-main: #f5f5f7;
+                --text-muted: #86868b;
+                --card-bg: #1c1c1e;
+                --border-color: #2c2c2e;
+
+                --badge-pink-bg: rgba(251, 114, 153, 0.15);
+                --badge-blue-bg: rgba(0, 174, 236, 0.15);
+                --badge-orange-bg: rgba(255, 149, 0, 0.15);
+
+                --btn-secondary-bg: #2c2c2e;
+                --btn-secondary-hover: #3a3a3c;
+            }
+        }
+
+        /* 基础重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            transition: background-color 0.5s ease;
+            padding: 40px 20px;
+        }
+
+        /* 主容器 */
+        .container {
+            width: 100%;
+            max-width: 440px;
+            animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 头部 */
+        .header {
+            margin-bottom: 24px;
+            padding: 0 4px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        /* 规则列表 */
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* 规则卡片 */
+        .rule-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .rule-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+        }
+
+        /* 卡片头部：圆点、标题与违规标签 */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        /* 右侧轻量状态标签 */
+        .tag {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .tag-danger {
+            color: var(--accent-pink);
+            background-color: var(--badge-pink-bg);
+        }
+
+        .tag-warning {
+            color: var(--accent-orange);
+            background-color: var(--badge-orange-bg);
+        }
+
+        .tag-info {
+            color: var(--accent-blue);
+            background-color: var(--badge-blue-bg);
+        }
+
+        /* 卡片正文描述 */
+        .card-body {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.55;
+            padding-left: 18px; /* 对齐圆点右侧 */
+        }
+
+        /* 高亮文字 */
+        .card-body strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .bot-highlight {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* 底部操作按钮组 */
+        .action-group {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 主按钮 (加入频道) */
+        .btn-primary {
+            background-color: var(--text-main);
+            color: var(--bg-color);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* 次按钮 (回到机器人) */
+        .btn-secondary {
+            background-color: var(--btn-secondary-bg);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--btn-secondary-hover);
+        }
+
+        /* 页脚声明 */
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 10px;
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>社群公约</h1>
+            <p>入群即视为阅读并同意以下行为准则</p>
+        </header>
+
+        <!-- 群规列表 -->
+        <main class="rules-list">
+
+            <!-- 规则 1 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-pink);"></span>
+                        <h2 class="title">禁止发布广告</h2>
+                    </div>
+                    <span class="tag tag-danger">直接踢出</span>
+                </div>
+                <div class="card-body">
+                    本群严格禁止任何形式的商业或个人广告。一经发现，将由系统自动触发 <span class="bot-highlight">@rose</span> 执行踢出处理。
+                </div>
+            </article>
+
+            <!-- 规则 2 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-orange);"></span>
+                        <h2 class="title">保持社交界限</h2>
+                    </div>
+                    <span class="tag tag-warning">行为规范</span>
+                </div>
+                <div class="card-body">
+                    请维护健康良好的聊天环境，<strong>请勿挑逗群主</strong>，避免对他人造成困扰。
+                </div>
+            </article>
+
+            <!-- 规则 3 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-pink);"></span>
+                        <h2 class="title">严禁不良敏感内容</h2>
+                    </div>
+                    <span class="tag tag-danger">直接踢出</span>
+                </div>
+                <div class="card-body">
+                    严禁发送任何 <strong>R18、18+、R18+G</strong> 等一系列引人不适或令人反感的新闻、图片、动漫情节及游戏情节，违者直接踢出。
+                </div>
+            </article>
+
+            <!-- 规则 4 -->
+            <article class="rule-card">
+                <div class="card-header">
+                    <div class="title-group">
+                        <span class="dot" style="background-color: var(--accent-blue);"></span>
+                        <h2 class="title">政治话题管控</h2>
+                    </div>
+                    <span class="tag tag-info">特定限制</span>
+                </div>
+                <div class="card-body">
+                    为保障群聊空间的长期稳定与安全，<strong>部分政治相关内容在本群禁止讨论</strong>，请大家理解与配合。
+                </div>
+            </article>
+
+        </main>
+
+        <!-- 底部跳转按钮 -->
+        <div class="action-group">
+            <a href="https://t.me/WaterChisato" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                加入频道
+            </a>
+            <a href="https://t.me/shuishui_tghzbot?start=1" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                回到机器人
+            </a>
+        </div>
+
+        <footer class="footer">
+            感谢你共同维护良好和谐的交流氛围
+        </footer>
+    </div>
+
+</body>
+</html>
