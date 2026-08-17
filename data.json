@@ -1,5 +1,13 @@
 [
   {
+    "id": 0,
+    "groupName": "互助展示频道",
+    "owner": "水水互助所有者",
+    "type": "pd",
+    "pt":"Telegram",
+    "link": "https://t.me/shuishui_tghz"
+  },
+  {
     "id": 1,
     "groupName": "水喝千束QAQ",
     "owner": "水喝千束",
