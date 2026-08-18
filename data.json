@@ -70,5 +70,13 @@
     "type": "pd",
     "pt":"WhatsApp",
     "link": "https://whatsapp.com/channel/0029Vb8qAM76BIEcQz0AiE2n"
-  }
+  },
+ {
+    "id": 9,
+    "groupName": "星愿漂流瓶",
+    "owner": "Plana",
+    "type": "qz",
+    "pt": "telegram",
+    "link": "https://t.me/+cgJiXpAppKs3ZDdh"
+ }
 ]
