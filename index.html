@@ -3,17 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- ===== 修改层：UA 校验 / Telegram 环境 / start_param 路由 / 深链唤起（已替换原逻辑） ===== -->
+    <!-- ===== 新增：UA 浏览器标识校验层（未改动下方任何原有代码） ===== -->
     <script>
-    /* 概览：
-       1) 拦截 微信/QQ 内置浏览器 与 伪造冲突 UA；
-       2) 若运行在 Telegram 内置 WebView（Mini App）：优先读取 start_param，
-          当为 rule_{序号} / rule-{序号} 时，自动跳转到 https://tghz.20110202.top/rule/{序号}.html；
-          否则停留在本页正常渲染群聊列表（不再重复执行“跳App/遮罩”逻辑）；
-       3) 正常浏览器：尝试唤起 Telegram App。
-          兜底判断 只依赖 pagehide + visibilitychange（不再用 blur，避免误判）；
-          iOS Safari 首次 touchend 直接 location.href 深链（不用 iframe），唤起更快。
-    */
+    /* 拦截 微信/QQ 内置浏览器 与 伪造冲突 UA；正常浏览器尝试新开界面跳转 Telegram 机器人 */
     (function () {
         var ua = navigator.userAgent || '';
         var uaL = ua.toLowerCase();
@@ -32,12 +24,14 @@
             for (var i = 0; i < exclusive.length; i++) {
                 if (uaL.indexOf(exclusive[i]) !== -1) hits++;
             }
-            if (hits >= 2) blocked = true;
+            if (hits >= 2) blocked = true; // 真实 UA 只会出现其中某一个
 
             if (!blocked && uaL.indexOf('chrome') !== -1 && uaL.indexOf('firefox') !== -1) blocked = true;
 
+            // Android 版本号写法异常（如 Android16 无空格 / 多个空格）
             if (!blocked && /android\s*1[0-9]/.test(uaL) && !/android 1[0-9]/.test(uaL)) blocked = true;
 
+            // Android 10+ 却堆了一堆浏览器标识 + Safari（正常 Chromium 系 = Chrome+Safari 共 2 个）
             if (!blocked && /android 1[0-9]/.test(uaL)) {
                 var markers = ['chrome', 'safari', 'firefox', 'edg', 'opr', 'vivaldi', 'samsungbrowser', 'ucbrowser'];
                 var n = 0;
@@ -46,44 +40,35 @@
             }
         }
 
-        // ===== 判断是否运行在 Telegram 内置环境（Mini App / 官方 WebView）=====
-        var inTelegram = false;
+        // ===== Mini App start_param 路由：rule_{n} / rule/{n} → 跳转对应规则页 =====
+        // 必须在 tg:// 唤起逻辑之前执行；命中即 location.replace 并完全跳过唤起逻辑
         var startParam = '';
         try {
-            if (window.Telegram && window.Telegram.WebApp) {
-                inTelegram = true;
-                var initData = window.Telegram.WebApp.initDataUnsafe || {};
-                startParam = initData.start_param || '';
+            var qs = new URLSearchParams(window.location.search);
+            startParam = qs.get('tgWebAppStartParam') || '';
+        } catch (e) { /* 忽略 */ }
+        try {
+            var wa = window.Telegram && window.Telegram.WebApp;
+            if (!startParam && wa && wa.initDataUnsafe && wa.initDataUnsafe.start_param) {
+                startParam = decodeURIComponent(wa.initDataUnsafe.start_param);
             }
-        } catch (e) { inTelegram = false; }
-
-        // 兜底：也从 URL query 里读 tgWebAppStartParam（防止 SDK 尚未注入 / initData 未就绪）
-        if (!startParam) {
-            try {
-                var mq = location.search.match(/[?&]tgWebAppStartParam=([^&]*)/);
-                if (mq) startParam = decodeURIComponent(mq[1]);
-            } catch (e) {}
+        } catch (e) { /* 忽略 */ }
+        var ruleMatch = /^rule[/_-](\d+)$/.exec(String(startParam || ''));
+        if (ruleMatch) {
+            var RULE_REDIRECTED = true;
+            location.replace('https://tghz.20110202.top/rule/' + ruleMatch[1] + '.html');
+            return; // 跳转后不再执行任何 tg:// 唤起 / 兜底逻辑
         }
 
-        var BASE = 'https://tghz.20110202.top';
+        // 参考 Telegram 官方 t.me 页面的深链唤起方法：
+        // 1) 隐藏 iframe 静默加载 tg:// 深链唤起 App —— 不报错、不残留协议串、地址栏不变；
+        // 2) 2 秒内页面未被切走（pagehide / visibilitychange 未触发）= 没唤起成功，再新标签打开 t.me 网页兜底
         var PROTO_URL = 'tg://resolve?domain=shuishui_tghzbot';
         var PAGE_URL = 'https://t.me/shuishui_tghzbot';
 
-        // ===== Telegram 内置环境：处理 start_param 路由，不重复“跳App / 遮罩” =====
-        if (inTelegram) {
-            // startapp=rule_{序号} 或 rule-{序号} → 自动定位到对应规则页
-            var rm = startParam.match(/^rule[_\-](\d+)$/i);
-            if (rm) {
-                var num = parseInt(rm[1], 10);      // 归一化，避免 rule_01 之类的零头
-                if (!isNaN(num)) {
-                    try { window.location.href = BASE + '/rule/' + num + '.html'; } catch (e) {}
-                }
-            }
-            // 无参数 / 非规则参数：留在本页正常渲染群聊列表（下方主脚本会填充 data.json）
-            return;
-        }
-
-        // ===== 被拦截（微信/QQ/伪造 UA）：全屏不透明遮罩 =====
+        // 被拦截：在页面最顶层铺一个全屏不透明遮罩，明确显示"不支持"。
+        // 不用 document.write 覆盖文档（部分内核会把写入内容与原网页混着渲染，导致提示下方露出原网页）；
+        // 改为 fixed 全屏遮罩，任何内核下都能 100% 盖住原页面。
         if (blocked) {
             var overlay = document.createElement('div');
             overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483647;' +
@@ -94,30 +79,34 @@
                 '<h1 style="font-size:1.4rem;margin:0 0 .6rem;font-weight:700;color:#f1f5f9;">不支持此浏览器，请更换浏览器</h1>' +
                 '<p style="color:#94a3b8;font-size:.95rem;line-height:1.7;margin:0;">本页面不支持微信 / QQ 内置浏览器，<br>请在 Chrome、Safari、Edge 等浏览器中打开</p>';
             document.documentElement.appendChild(overlay);
+            // 双保险：若 body 已渲染，一并压到遮罩之下
             if (document.body) document.body.style.display = 'none';
             return;
         }
 
-        // ===== 正常浏览器：尝试唤起 Telegram App =====
-        var isIOS = /ipad|iphone|ipod/i.test(ua);
-        var pageHidden = false;
-        var fallbackStarted = false;
+        // 正常浏览器：参考 Telegram 官方方法唤起 App / 兜底跳转
+        function tryOpenBot() {
+            var pageHidden = false;
+            window.addEventListener('pagehide', function () { pageHidden = true; }, false);
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) pageHidden = true;
+            }, false);
 
-        // 只依赖 pagehide + visibilitychange（不再监听 blur，避免安卓确认框 / 点击输入框引发误判）
-        window.addEventListener('pagehide', function () { pageHidden = true; }, false);
-        document.addEventListener('visibilitychange', function () {
-            if (document.visibilityState === 'hidden') pageHidden = true;
-        }, false);
+            // 官方同款：隐藏 iframe 静默加载深链唤起 App（唤起失败也无声无息，不影响地址栏）
+            try {
+                var iframe = document.createElement('iframe');
+                iframe.style.cssText = 'position:fixed;width:0;height:0;border:0;visibility:hidden;';
+                iframe.src = PROTO_URL;
+                document.body.appendChild(iframe);
+            } catch (e) { /* 忽略 */ }
 
-        // 唤起失败时才走 t.me 兜底；若页面已切走（App 已打开）则不打扰
-        function startFallback() {
-            if (fallbackStarted) return;
-            fallbackStarted = true;
+            // 2 秒后页面还在 = App 未被唤起 → 新标签打开 t.me 网页兜底（地址栏干净，不会残留协议串）
             setTimeout(function () {
                 if (pageHidden) return;
                 var win = null;
                 try { win = window.open(PAGE_URL, '_blank'); } catch (e) { win = null; }
                 if (!win) {
+                    // 弹窗被拦截：页面底部给出手动入口
                     var tip = document.createElement('div');
                     tip.style.cssText = 'position:fixed;left:50%;bottom:1rem;transform:translateX(-50%);z-index:99999;' +
                         'background:rgba(18,24,38,.96);border:1px solid rgba(0,210,255,.45);color:#f1f5f9;' +
@@ -127,40 +116,27 @@
                         'style="color:#00d2ff;font-weight:600;text-decoration:none;">点此前往 👉</a>';
                     document.body.appendChild(tip);
                 }
-            }, 2500);
+            }, 2000);
         }
 
-        // 桌面 / 安卓：隐藏 iframe 静默加载深链（唤起失败不报错、不残留协议串）
-        function tryOpenBot() {
-            try {
-                var iframe = document.createElement('iframe');
-                iframe.style.cssText = 'position:fixed;width:0;height:0;border:0;visibility:hidden;';
-                iframe.src = PROTO_URL;
-                document.body.appendChild(iframe);
-            } catch (e) { /* 忽略 */ }
-            startFallback();
-        }
-
-        if (isIOS) {
-            // iOS Safari：iframe 唤起自定义 scheme 基本无效 → 首次 touchend 直接 location.href 深链，唤起更快
-            var touchFired = false;
+        // iOS Safari：首次 touchend 直接触发深链，加快唤起（仅一次；已被 rule 路由跳转时跳过）
+        if (typeof RULE_REDIRECTED === 'undefined') {
+            var iosTouched = false;
             document.addEventListener('touchend', function () {
-                if (touchFired) return;
-                touchFired = true;
-                try { window.location.href = PROTO_URL; } catch (e) { /* 忽略 */ }
-                // 尝试后：若 2.5s 页面仍在（未唤起成功），走 t.me 兜底
-                startFallback();
-            }, { passive: true });
+                if (iosTouched) return;
+                iosTouched = true;
+                try { location.href = 'tg://resolve?domain=shuishui_tghzbot'; } catch (e) { /* 忽略 */ }
+            }, { passive: true, once: true });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', tryOpenBot);
         } else {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', tryOpenBot);
-            } else {
-                tryOpenBot();
-            }
+            tryOpenBot();
         }
     })();
     </script>
-    <!-- ===== 修改层结束，以下为原有代码（未改动） ===== -->
+    <!-- ===== 新增层结束，以下为原有代码 ===== -->
     <title>全平台的群聊频道互助</title>
     <style>
         :root {
@@ -608,8 +584,8 @@
             const card = document.createElement('div');
             card.className = `card ${isPd ? 'card-pd' : ''}`;
             card.style.animationDelay = `${index * 0.03}s`;
-
-            const typeBadgeHtml = isPd
+            
+            const typeBadgeHtml = isPd 
                 ? `<span class="type-badge pd">📢 频道</span>`
                 : `<span class="type-badge qz">💬 群组</span>`;
 
@@ -654,7 +630,7 @@
         const query = document.getElementById('searchInput').value.toLowerCase().trim();
         const filtered = telegramData.filter(item => {
             const matchesType = currentTypeFilter === 'all' || item.type === currentTypeFilter;
-            const matchesSearch = (item.groupName && item.groupName.toLowerCase().includes(query)) ||
+            const matchesSearch = (item.groupName && item.groupName.toLowerCase().includes(query)) || 
                                   (item.owner && item.owner.toLowerCase().includes(query)) ||
                                   (item.pt && item.pt.toLowerCase().includes(query));
             return matchesType && matchesSearch;
