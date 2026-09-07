@@ -4,7 +4,7 @@
     "groupName": "互助展示频道",
     "owner": "水水互助所有者",
     "type": "pd",
-    "pt":"Telegram",
+    "pt": "Telegram",
     "link": "https://t.me/shuishui_tghz"
   },
   {
@@ -12,7 +12,7 @@
     "groupName": "水喝千束QAQ",
     "owner": "水喝千束",
     "type": "qz",
-    "pt":"Telegram",
+    "pt": "Telegram",
     "link": "https://t.me/+wVFNNHSZNOhkMzZl"
   },
   {
@@ -20,15 +20,15 @@
     "groupName": "延和的小家",
     "owner": "延和酱owo",
     "type": "qz",
-    "pt":"Telegram",
+    "pt": "Telegram",
     "link": "https://t.me/+hF1Pz60HbldjYjY5"
   },
-   {
+  {
     "id": 3,
     "groupName": "来玩喵",
     "owner": "水喝千束",
-     "type": "qz",
-     "pt":"telegram",
+    "type": "qz",
+    "pt": "Telegram",
     "link": "https://t.me/+Gn5PJ_X_TtUyZjI1"
   },
   {
@@ -36,7 +36,7 @@
     "groupName": "QAQ",
     "owner": "Shiny shark",
     "type": "qz",
-    "pt":"Telegram",
+    "pt": "Telegram",
     "link": "https://t.me/+Jxc4V_1d7pBjZmU1"
   },
   {
@@ -44,7 +44,7 @@
     "groupName": "海栀子今天的饭堂（?",
     "owner": "栀 海",
     "type": "qz",
-    "pt":"Telegram",
+    "pt": "Telegram",
     "link": "https://t.me/+ya0xCcTMJVhmYThl"
   },
   {
@@ -52,15 +52,15 @@
     "groupName": "千束的频道QAQ",
     "owner": "Chisato",
     "type": "pd",
-    "pt":"telegram",
+    "pt": "Telegram",
     "link": "https://t.me/waterchisato"
   },
   {
     "id": 7,
     "groupName": "防骗交流群",
     "owner": "Null",
-    "type" : "qz",
-    "pt":"QQ",
+    "type": "qz",
+    "pt": "QQ",
     "link": "https://qm.qq.com/q/jF0iE2Z7Mc"
   },
   {
@@ -68,31 +68,31 @@
     "groupName": "次放studio",
     "owner": "次放studio",
     "type": "pd",
-    "pt":"WhatsApp",
+    "pt": "WhatsApp",
     "link": "https://whatsapp.com/channel/0029Vb8qAM76BIEcQz0AiE2n"
   },
- {
+  {
     "id": 9,
     "groupName": "星愿漂流瓶",
     "owner": "Plana",
     "type": "qz",
-    "pt": "telegram",
+    "pt": "Telegram",
     "link": "https://t.me/+cgJiXpAppKs3ZDdh"
- },
- {
+  },
+  {
     "id": 10,
     "groupName": "基沃托斯联邦综合理事会",
-    "owner": "plana",
+    "owner": "Plana",
     "type": "qz",
     "pt": "QQ",
     "link": "https://qm.qq.com/q/zBznCT1MZk"
- },
-{
+  },
+  {
     "id": 11,
     "groupName": "阿b评论精选",
     "owner": "demandianeeding",
     "type": "pd",
-    "pt": "telegram",
+    "pt": "Telegram",
     "link": "https://t.me/quickReviewOfBilibili"
-}
+  }
 ]
