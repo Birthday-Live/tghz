@@ -102,5 +102,13 @@
     "type": "qz",
     "pt": "telegram",
     "link": "https://t.me/+hzYnUl8euNowYzU1"
+},
+{
+    "id": 13,
+    "groupName": "互助宣传bot",
+    "owner": "互助官方",
+    "type": "bot",
+    "pt": "Telegram",
+    "link": "https://t.me/ss_tghzxcbot"
 }
 ]
