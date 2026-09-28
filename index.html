@@ -92,7 +92,7 @@
                 if (document.hidden) pageHidden = true;
             }, false);
 
-            // 官方同款：隐藏 iframe 静默加载深链唤起 App（唤起失败也无声无息，不影响地址栏）
+                        // 官方同款：隐藏 iframe 静默加载深链唤起 App（唤起失败也无声无息，不影响地址栏）
             try {
                 var iframe = document.createElement('iframe');
                 iframe.style.cssText = 'position:fixed;width:0;height:0;border:0;visibility:hidden;';
@@ -100,13 +100,13 @@
                 document.body.appendChild(iframe);
             } catch (e) { /* 忽略 */ }
 
-            // 2 秒后页面还在 = App 未被唤起 → 新标签打开 t.me 网页兜底（地址栏干净，不会残留协议串）
+            /*
+            // 2 秒后页面还在 = App 未被唤起 → 新标签打开 t.me 网页兜底
             setTimeout(function () {
                 if (pageHidden) return;
                 var win = null;
                 try { win = window.open(PAGE_URL, '_blank'); } catch (e) { win = null; }
                 if (!win) {
-                    // 弹窗被拦截：页面底部给出手动入口
                     var tip = document.createElement('div');
                     tip.style.cssText = 'position:fixed;left:50%;bottom:1rem;transform:translateX(-50%);z-index:99999;' +
                         'background:rgba(18,24,38,.96);border:1px solid rgba(0,210,255,.45);color:#f1f5f9;' +
@@ -117,6 +117,7 @@
                     document.body.appendChild(tip);
                 }
             }, 2000);
+            */
         }
 
         // iOS Safari：首次 touchend 直接触发深链，加快唤起（仅一次；已被 rule 路由跳转时跳过）
@@ -136,6 +137,7 @@
         }
     })();
     </script>
+
     <!-- ===== 新增层结束，以下为原有代码 ===== -->
     <title>全平台的群聊频道互助</title>
     <style>
