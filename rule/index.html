@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互助群群规</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 sm:p-6 md:p-8">
+
+    <!-- 主容器 -->
+    <main class="max-w-xl mx-auto w-full my-auto py-6">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100">
+            
+            <!-- 标题区 -->
+            <header class="border-b border-slate-100 pb-5 mb-6">
+                <h1 class="text-2xl font-bold text-slate-800 mb-2">互助群群规</h1>
+                <p class="text-slate-500 text-sm leading-relaxed">
+                    这个群是一个互助交流的群哦！
+                </p>
+            </header>
+
+            <!-- 准入说明 -->
+            <div class="mb-6 p-3.5 bg-sky-50/60 rounded-xl border border-sky-100 text-sky-800 text-sm flex items-center gap-3">
+                <i class="fa-solid fa-user-check text-sky-500"></i>
+                <span>只有被邀请的用户才可以加入awa</span>
+            </div>
+
+            <!-- 规则列表 -->
+            <section class="space-y-4 mb-8">
+                <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">你需要遵守群规</h2>
+                
+                <ul class="space-y-3 text-sm text-slate-700">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-ban text-rose-400 mt-1"></i>
+                        <span>禁止发广告</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-shield-halved text-rose-400 mt-1"></i>
+                        <span>禁止聊色情和政治内容</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-link-slash text-rose-400 mt-1"></i>
+                        <div>
+                            <span>不可以发来自其它互助的群聊链接</span>
+                            <div class="mt-1.5 p-2 bg-slate-50 rounded border border-slate-100 text-xs text-slate-400 font-mono break-all">
+                                示例：https://t.me/didibotas/?start=1 （此类链接是不被允许的）
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Bot 互动卡片 (浅色温和风格) -->
+            <section class="p-5 bg-slate-50 rounded-xl border border-slate-100">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs">
+                        Bot
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">官方互助 Bot</div>
+                        <div class="text-sm font-semibold text-slate-800 font-mono">@shuishui_tghzbot</div>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                    有任何关于此互助的相关问题都可以进行讨论（聊天也行）
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-2.5">
+                    <a href="https://t.me/shuishui_tghzbot" target="_blank" rel="noopener noreferrer" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white font-medium text-sm rounded-lg transition-colors">
+                        <i class="fa-solid fa-robot"></i>
+                        <span>去使用 Bot</span>
+                    </a>
+                    <button onclick="copyBotHandle()" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 font-medium text-sm rounded-lg transition-colors">
+                        <i class="fa-regular fa-clone"></i>
+                        <span>复制 Bot 账号</span>
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="text-center py-4 text-xs text-slate-400">
+        互助交流群 · 极简指南
+    </footer>
+
+    <!-- Toast 提示框 -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800/90 text-white px-4 py-2 rounded-lg text-xs backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none z-50">
+        已复制 Bot 账号到剪贴板
+    </div>
+
+    <!-- JS 逻辑 -->
+    <script>
+        function copyBotHandle() {
+            const handle = '@shuishui_tghzbot';
+            navigator.clipboard.writeText(handle).then(() => {
+                showToast('已复制 Bot 账号：' + handle);
+            }).catch(() => {
+                // 兼容性备用方案
+                const textarea = document.createElement('textarea');
+                textarea.value = handle;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('已复制 Bot 账号：' + handle);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
