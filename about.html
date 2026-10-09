@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>全平台互助 · 水水版互助</title>
+<meta name="description" id="metaDesc" content="全平台互助。申请加入、使用互助都在这里。互助 bot 仅提供简体中文。" />
+<meta name="theme-color" content="#060a12" />
+<meta property="og:title" content="全平台互助" />
+<meta property="og:description" content="水水版互助网站上线啦。互助 bot 仅提供简体中文。" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Sans+JP:wght@400;600&family=Noto+Sans+KR:wght@400;600&family=Outfit:wght@200;400;600;800&display=swap" rel="stylesheet">
+<style>
+/* ==================== 基础 ==================== */
+:root{
+  --bg:#060a12;
+  --fg:#eef2f8;
+  --muted:rgba(238,242,248,.58);
+  --line:rgba(255,255,255,.09);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;background:var(--bg);color:var(--fg);
+  font-family:"Outfit","Noto Sans SC",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.75;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+html[lang="ja"] body{font-family:"Noto Sans JP","Outfit",system-ui,sans-serif}
+html[lang="ko"] body{font-family:"Noto Sans KR","Outfit",system-ui,sans-serif}
+::selection{background:rgba(42,169,224,.35)}
+
+/* ==================== 背景 ==================== */
+.aurora{position:fixed;inset:-30vmax;z-index:-3;filter:blur(95px) saturate(150%);opacity:.75}
+.blob{position:absolute;border-radius:50%;mix-blend-mode:screen;will-change:transform}
+.b1{width:50vmax;height:50vmax;left:-4%;top:0%;background:radial-gradient(circle at 40% 40%,#2aa9e0,#0d3f63 60%,transparent 72%);animation:d1 28s var(--ease) infinite alternate}
+.b2{width:44vmax;height:44vmax;right:-2%;top:8%;background:radial-gradient(circle at 50% 50%,#37e0c8,#0a5a55 58%,transparent 72%);animation:d2 34s var(--ease) infinite alternate}
+.b3{width:46vmax;height:46vmax;left:26%;bottom:-4%;background:radial-gradient(circle at 50% 50%,#7c5cff,#2a1a6b 58%,transparent 72%);animation:d3 30s var(--ease) infinite alternate}
+.b4{width:34vmax;height:34vmax;right:14%;bottom:4%;background:radial-gradient(circle at 50% 50%,#ff5c9d,#6d1f45 58%,transparent 72%);opacity:.6;animation:d4 36s var(--ease) infinite alternate}
+@keyframes d1{to{transform:translate3d(12vmax,9vmax,0) scale(1.22)}}
+@keyframes d2{to{transform:translate3d(-14vmax,12vmax,0) scale(1.14)}}
+@keyframes d3{to{transform:translate3d(9vmax,-12vmax,0) scale(1.26)}}
+@keyframes d4{to{transform:translate3d(-10vmax,-9vmax,0) scale(1.18)}}
+.vignette{position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:radial-gradient(130% 95% at 50% 0%,transparent 28%,rgba(6,10,18,.82) 100%)}
+.noise{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:100}
+.progress i{display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,#2aa9e0,#37e0c8,#a58cff);
+  box-shadow:0 0 14px rgba(55,224,200,.75);transition:width .12s linear}
+
+.wrap{width:min(1080px,90vw);margin:0 auto}
+section{position:relative}
+
+/* ==================== HERO ==================== */
+.hero{padding:clamp(3.2rem,10vw,6.5rem) 0 clamp(2.5rem,6vw,4rem);text-align:center}
+.hello-swap{height:clamp(4.2rem,14vw,9rem);display:flex;align-items:center;justify-content:center;position:relative}
+#helloBig{
+  font-size:clamp(3.2rem,12.5vw,8.6rem);font-weight:200;line-height:1;letter-spacing:-.02em;
+  white-space:nowrap;
+  background:linear-gradient(115deg,#fff 8%,#c9b8ff 32%,#7ef2dd 55%,#ffd6ea 78%,#fff 95%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 42px rgba(140,110,255,.45));
+  animation:shineBig 7s linear infinite;will-change:transform,opacity,filter}
+@keyframes shineBig{to{background-position:220% 0}}
+#helloBig.out{animation:swapOut .42s var(--ease) forwards}
+#helloBig.in{animation:swapIn .62s var(--ease) both,shineBig 7s linear infinite}
+@keyframes swapOut{to{opacity:0;transform:translateY(-14px) scale(.96);filter:blur(9px)}}
+@keyframes swapIn{from{opacity:0;transform:translateY(18px) scale(1.04);filter:blur(11px)}
+  to{opacity:1;transform:none;filter:blur(0)}}
+
+.hero h1{font-size:clamp(1.35rem,4.2vw,2.1rem);font-weight:600;letter-spacing:-.01em;margin-top:.9rem}
+html[dir="rtl"] .hero h1{letter-spacing:normal}
+.hero .lead{max-width:600px;margin:1rem auto 0;color:var(--muted);font-weight:300;
+  font-size:clamp(.95rem,2.5vw,1.05rem)}
+
+.badge{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.5rem;
+  font-size:.78rem;font-weight:500;color:#d9ecff;padding:.45rem 1.05rem;border-radius:999px;
+  border:1px solid rgba(42,169,224,.42);background:rgba(42,169,224,.14);backdrop-filter:blur(8px)}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:#37e0c8;
+  box-shadow:0 0 10px #37e0c8;animation:blip 2s infinite}
+@keyframes blip{50%{opacity:.3}}
+
+.chips{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center;margin-top:1.7rem}
+.chip{font-size:.8rem;color:rgba(255,255,255,.78);padding:.42rem 1rem;border-radius:999px;
+  border:1px solid var(--line);background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+  transition:.4s var(--ease)}
+.chip:hover{transform:translateY(-2px);background:rgba(42,169,224,.16);border-color:rgba(42,169,224,.45);color:#fff}
+
+.scrollhint{margin-top:2.8rem;display:inline-flex;flex-direction:column;align-items:center;gap:.45rem;
+  color:rgba(255,255,255,.32);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase}
+.scrollhint svg{animation:bob 2.1s var(--ease) infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(7px);opacity:1}}
+
+/* ==================== 通用板块 ==================== */
+.sec{padding:clamp(2.6rem,7vw,4.6rem) 0}
+.kicker{display:inline-block;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;
+  background:linear-gradient(90deg,#37e0c8,#7cc9ff);-webkit-background-clip:text;background-clip:text;
+  color:transparent;font-weight:600;margin-bottom:.7rem}
+html[dir="rtl"] .kicker{letter-spacing:normal;text-transform:none}
+.sec h3{font-size:clamp(1.45rem,4.2vw,2.15rem);font-weight:600;letter-spacing:-.01em;margin-bottom:.8rem}
+html[dir="rtl"] .sec h3{letter-spacing:normal}
+.sec .lead{color:var(--muted);font-weight:300;max-width:660px}
+
+/* ==================== 红色警告 ==================== */
+.alert{margin-top:2.2rem;border-radius:20px;border:1px solid rgba(255,70,90,.34);overflow:hidden;
+  background:linear-gradient(140deg,rgba(255,60,85,.17),rgba(255,60,85,.05));
+  box-shadow:0 0 46px -18px rgba(255,60,85,.75)}
+.alert .hd{padding:1.15rem 1.4rem;font-weight:700;font-size:clamp(.98rem,2.8vw,1.18rem);
+  color:#ffd2d9;text-align:center;letter-spacing:.02em}
+.alert .tk{overflow:hidden;border-top:1px solid rgba(255,70,90,.22);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.alert .ticker{display:flex;gap:2.4rem;width:max-content;padding:.68rem 0;animation:mq 22s linear infinite}
+.alert .ticker span{white-space:nowrap;font-size:.85rem;font-weight:600;color:rgba(255,152,168,.92)}
+@keyframes mq{to{transform:translateX(-50%)}}
+html[dir="rtl"] .alert .ticker{animation-name:mqR}
+@keyframes mqR{to{transform:translateX(50%)}}
+
+/* ==================== 要求列表 ==================== */
+.reqs{margin-top:1.8rem;display:grid;gap:.75rem}
+.req{display:flex;gap:.9rem;align-items:flex-start;
+  padding:1.05rem 1.2rem;border-radius:16px;border:1px solid var(--line);
+  background:rgba(255,255,255,.035);backdrop-filter:blur(12px);
+  color:rgba(255,255,255,.8);font-weight:300;font-size:.93rem;transition:.4s var(--ease)}
+.req:hover{background:rgba(255,255,255,.07);border-color:rgba(42,169,224,.35)}
+.req i{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+  font-style:normal;font-size:.74rem;font-weight:700;color:#04121c;margin-top:.2rem;
+  background:linear-gradient(135deg,#37e0c8,#2aa9e0)}
+
+/* ==================== 特点卡片 ==================== */
+.grid{display:grid;gap:1rem;margin-top:2.2rem;grid-template-columns:repeat(auto-fit,minmax(262px,1fr))}
+.card{position:relative;isolation:isolate;overflow:hidden;padding:1.5rem 1.4rem;border-radius:20px;
+  border:1px solid var(--line);
+  background:linear-gradient(165deg,rgba(255,255,255,.068),rgba(255,255,255,.018));
+  backdrop-filter:blur(16px) saturate(130%);
+  transition:transform .5s var(--ease),box-shadow .5s var(--ease),border-color .5s var(--ease)}
+.card::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;z-index:0;pointer-events:none;
+  background:conic-gradient(from var(--a,0deg),#2aa9e0,#37e0c8,#7c5cff,#ff5c9d,#2aa9e0);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .5s var(--ease)}
+@property --a{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes spinA{to{--a:360deg}}
+.card:hover{transform:translateY(-6px);border-color:transparent;
+  box-shadow:0 26px 52px -22px rgba(0,0,0,.9),0 0 40px -16px rgba(42,169,224,.55)}
+.card:hover::before{opacity:1;animation:spinA 5s linear infinite}
+.card > *{position:relative;z-index:1}
+.ico{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
+  margin-bottom:.95rem;border:1px solid rgba(255,255,255,.12);color:#c9f2ff;
+  background:linear-gradient(145deg,rgba(42,169,224,.3),rgba(55,224,200,.14));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);transition:.45s var(--ease)}
+.ico svg{width:21px;height:21px;display:block}
+.card:hover .ico{color:#eaffff;border-color:rgba(55,224,200,.4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 20px -4px rgba(55,224,200,.6)}
+.card h4{font-size:1.02rem;font-weight:600;margin-bottom:.4rem}
+.card p{color:rgba(255,255,255,.6);font-weight:300;font-size:.885rem;line-height:1.72}
+
+/* ==================== 步骤 ==================== */
+.steps{margin-top:2.2rem;display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.step{padding:1.45rem 1.35rem;border-radius:20px;border:1px solid var(--line);
+  background:rgba(255,255,255,.035);backdrop-filter:blur(12px);transition:.45s var(--ease)}
+.step:hover{background:rgba(255,255,255,.075);transform:translateY(-4px)}
+.step .num{font-family:"Outfit",sans-serif;font-size:2.4rem;font-weight:200;line-height:1;
+  background:linear-gradient(135deg,#2aa9e0,#37e0c8);-webkit-background-clip:text;background-clip:text;
+  color:transparent;display:block;margin-bottom:.6rem}
+.step h4{font-size:.98rem;font-weight:600;margin-bottom:.35rem}
+.step p{color:rgba(255,255,255,.58);font-weight:300;font-size:.88rem;line-height:1.72}
+
+/* ==================== 链接列表 ==================== */
+.links{margin-top:1.8rem;display:flex;flex-direction:column;gap:.6rem}
+.linkrow{display:flex;align-items:center;gap:.9rem;padding:.95rem 1.15rem;border-radius:14px;
+  border:1px solid var(--line);background:rgba(255,255,255,.035);text-decoration:none;
+  color:rgba(255,255,255,.84);font-size:.9rem;transition:.4s var(--ease)}
+.linkrow:hover{background:rgba(42,169,224,.14);border-color:rgba(42,169,224,.45);transform:translateX(4px)}
+html[dir="rtl"] .linkrow:hover{transform:translateX(-4px)}
+.linkrow .em{width:20px;height:20px;flex:none;display:grid;place-items:center;color:#7fe3ff;
+  transition:.4s var(--ease)}
+.linkrow .em svg{width:18px;height:18px;display:block}
+.linkrow:hover .em{color:#b6f0ff}
+.linkrow .arr{margin-inline-start:auto;opacity:.45;transition:.4s var(--ease);flex:none}
+.linkrow:hover .arr{opacity:1;transform:translateX(3px)}
+html[dir="rtl"] .linkrow .arr{transform:scaleX(-1)}
+.linkrow code{font-family:ui-monospace,Menlo,monospace;font-size:.82rem;color:#7fe3ff;
+  direction:ltr;unicode-bidi:embed;white-space:nowrap}
+
+/* ==================== 语言声明 ==================== */
+.langnote{margin-top:2rem;padding:1.5rem 1.6rem;border-radius:22px;border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(150deg,rgba(124,92,255,.14),rgba(42,169,224,.08));
+  backdrop-filter:blur(16px)}
+.langnote .zh{display:inline-block;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;
+  color:#b8a8ff;font-weight:600;margin-bottom:.6rem}
+.langnote h4{font-size:clamp(1.05rem,3vw,1.35rem);font-weight:600;margin-bottom:.6rem}
+.langnote p{color:rgba(255,255,255,.66);font-weight:300;font-size:.92rem}
+.langnote p b{color:#fff;font-weight:600}
+
+/* ==================== CTA ==================== */
+.cta-wrap{padding:clamp(2.4rem,6vw,4.4rem) 0 clamp(1.6rem,5vw,3rem)}
+.cta{position:relative;isolation:isolate;overflow:hidden;text-align:center;
+  padding:clamp(2.4rem,6.5vw,3.8rem) clamp(1.3rem,5vw,3rem);border-radius:30px;
+  border:1px solid rgba(255,255,255,.11);
+  background:linear-gradient(150deg,rgba(42,169,224,.16),rgba(55,224,200,.07) 45%,rgba(124,92,255,.14));
+  backdrop-filter:blur(20px) saturate(140%);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.95)}
+.cta::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1.5px;z-index:0;
+  background:conic-gradient(from var(--a2,0deg),#2aa9e0,#37e0c8,#a58cff,#ff5c9d,#2aa9e0);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;animation:spinB 9s linear infinite;opacity:.85}
+@property --a2{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes spinB{to{--a2:360deg}}
+.cta > *{position:relative;z-index:1}
+.cta h3{font-size:clamp(1.4rem,4.4vw,2.15rem);font-weight:600;letter-spacing:-.01em;margin-bottom:.7rem}
+html[dir="rtl"] .cta h3{letter-spacing:normal}
+.cta p{color:var(--muted);font-weight:300;max-width:560px;margin:0 auto 1.9rem}
+.cta p code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;color:#9fe6ff;
+  background:rgba(255,255,255,.08);padding:.12rem .45rem;border-radius:6px;direction:ltr;unicode-bidi:embed}
+
+.btn-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:.65rem;
+  padding:1rem 2.2rem;border-radius:999px;text-decoration:none;font-size:1.02rem;font-weight:700;
+  font-family:inherit;transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+.btn svg{transition:transform .45s var(--ease);flex:none}
+html[dir="rtl"] .btn svg{transform:scaleX(-1)}
+.btn.primary{color:#04121c;background:linear-gradient(120deg,#37e0c8,#2aa9e0 55%,#5cb8ff);
+  box-shadow:0 16px 40px -14px rgba(42,169,224,.85),0 0 0 1px rgba(255,255,255,.24) inset}
+.btn.primary:hover{transform:translateY(-3px) scale(1.02);
+  box-shadow:0 26px 56px -16px rgba(42,169,224,.95),0 0 0 1px rgba(255,255,255,.4) inset}
+.btn.primary::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);
+  transform:skewX(-18deg);animation:sweep 3.6s var(--ease) infinite}
+@keyframes sweep{0%{left:-120%}55%,100%{left:150%}}
+.btn.ghost{color:#eaf4ff;background:rgba(255,255,255,.07);
+  box-shadow:0 0 0 1px rgba(255,255,255,.2) inset}
+.btn.ghost:hover{background:rgba(255,255,255,.15);transform:translateY(-3px);
+  box-shadow:0 0 0 1px rgba(255,255,255,.42) inset,0 18px 40px -18px rgba(255,255,255,.25)}
+.btn:hover svg{transform:translate(3px,-3px)}
+html[dir="rtl"] .btn:hover svg{transform:scaleX(-1) translate(3px,-3px)}
+
+.cta .hint{margin-top:1.1rem;font-size:.77rem;color:rgba(255,255,255,.4);
+  display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;align-items:center}
+.cta .hint code{font-family:ui-monospace,Menlo,monospace;color:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.07);padding:.14rem .5rem;border-radius:7px;font-size:.76rem;
+  direction:ltr;unicode-bidi:embed}
+
+/* ==================== 页脚 ==================== */
+footer{padding:2rem 0 6rem;text-align:center;color:rgba(255,255,255,.3);font-size:.78rem;line-height:2}
+footer .dotline{width:34px;height:1px;margin:0 auto 1.3rem;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent)}
+
+/* ==================== 语言切换器 ==================== */
+.langpick{position:fixed;bottom:1.4rem;inset-inline-end:1.4rem;z-index:80}
+.langbtn{display:flex;align-items:center;gap:.5rem;padding:.6rem .95rem;border-radius:999px;
+  border:1px solid var(--line);background:rgba(10,18,28,.8);backdrop-filter:blur(16px) saturate(140%);
+  color:rgba(255,255,255,.85);font-family:inherit;font-size:.8rem;cursor:pointer;
+  transition:.4s var(--ease);box-shadow:0 10px 30px -14px rgba(0,0,0,.9)}
+.langbtn:hover{color:#fff;border-color:rgba(42,169,224,.6);background:rgba(42,169,224,.16);
+  box-shadow:0 0 26px -6px rgba(42,169,224,.6)}
+.langbtn svg{opacity:.8;flex:none}
+.langbtn .caret{opacity:.5;transition:transform .4s var(--ease)}
+.langpick.open .caret{transform:rotate(180deg)}
+.langmenu{position:absolute;bottom:calc(100% + .6rem);inset-inline-end:0;min-width:172px;
+  overflow:auto;padding:.4rem;border-radius:18px;background:rgba(8,14,22,.95);
+  border:1px solid var(--line);backdrop-filter:blur(20px) saturate(140%);
+  box-shadow:0 26px 60px -20px rgba(0,0,0,.9);
+  opacity:0;transform:translateY(10px) scale(.95);transform-origin:bottom right;
+  pointer-events:none;transition:.35s var(--ease)}
+html[dir="rtl"] .langmenu{transform-origin:bottom left}
+.langpick.open .langmenu{opacity:1;transform:none;pointer-events:auto}
+.langmenu button{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;
+  padding:.5rem .7rem;border-radius:11px;background:none;border:0;cursor:pointer;
+  color:rgba(255,255,255,.75);font:inherit;font-size:.83rem;text-align:start;transition:.25s}
+.langmenu button:hover{background:rgba(255,255,255,.09);color:#fff}
+.langmenu button[aria-current="true"]{color:#fff;background:rgba(42,169,224,.22)}
+.langmenu button[aria-current="true"]::after{content:"";width:13px;height:13px;flex:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2337e0c8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m20 6-11 11-5-5'/%3E%3C/svg%3E") center/contain no-repeat}
+.langmenu .autoitem{display:flex;align-items:center;gap:.5rem}
+.langmenu .autoitem svg{flex:none;opacity:.8}
+.langmenu .sep{height:1px;margin:.35rem .3rem;background:var(--line)}
+.langmenu button .autoitem{display:inline-flex;align-items:center;gap:.5rem}
+.langmenu button .autoitem svg{width:14px;height:14px;flex:none;opacity:.7}
+@media(max-width:520px){.langbtn span.lbl{display:none}.langbtn{padding:.6rem .7rem}}
+
+/* ==================== 动画 ==================== */
+.reveal{opacity:0;transform:translateY(26px)}
+.reveal.on{opacity:1;transform:none;transition:opacity .85s var(--ease),transform .85s var(--ease)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="progress"><i id="bar"></i></div>
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="blob b3"></div><div class="blob b4"></div>
+</div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
+
+<main>
+  <!-- ================= HERO ================= -->
+  <section class="hero wrap">
+    <div class="hello-swap" aria-hidden="true"><span id="helloBig">你好</span></div>
+    <h1 data-i18n="h1"></h1>
+    <p class="lead" data-i18n="hero"></p>
+    <div class="badge" data-i18n="badge"></div>
+
+    <div class="chips">
+      <span class="chip" data-i18n="chip1"></span>
+      <span class="chip" data-i18n="chip2"></span>
+      <span class="chip" data-i18n="chip3"></span>
+      <span class="chip" data-i18n="chip4"></span>
+    </div>
+
+    <div class="scrollhint">
+      <span data-i18n="scroll"></span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+  </section>
+
+  <!-- ================= 这是什么 ================= -->
+  <section class="sec wrap">
+    <div class="reveal">
+      <span class="kicker" data-i18n="s1k"></span>
+      <h3 data-i18n="s1t"></h3>
+      <p class="lead" data-i18n="s1p"></p>
+    </div>
+  </section>
+
+  <!-- ================= 申请要求 ================= -->
+  <section class="sec wrap">
+    <div class="reveal">
+      <span class="kicker" data-i18n="s2k"></span>
+      <h3 data-i18n="s2t"></h3>
+    </div>
+
+    <div class="reqs reveal">
+      <div class="req"><i>1</i><span data-i18n="r1"></span></div>
+      <div class="req"><i>2</i><span data-i18n="r2"></span></div>
+      <div class="req"><i>3</i><span data-i18n="r3"></span></div>
+    </div>
+
+    <div class="alert reveal">
+      <div class="hd" data-i18n="warn"></div>
+      <div class="tk"><div class="ticker" id="ticker"></div></div>
+    </div>
+  </section>
+
+  <!-- ================= 群规 / 公告 ================= -->
+  <section class="sec wrap">
+    <div class="reveal">
+      <span class="kicker" data-i18n="s3k"></span>
+      <h3 data-i18n="s3t"></h3>
+      <p class="lead" data-i18n="s3p"></p>
+    </div>
+  </section>
+
+  <!-- ================= 特点和说明 ================= -->
+  <section class="sec wrap">
+    <div class="reveal">
+      <span class="kicker" data-i18n="s4k"></span>
+      <h3 data-i18n="s4t"></h3>
+    </div>
+
+    <div class="grid">
+      <article class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></div>
+        <h4 data-i18n="c1t"></h4>
+        <p data-i18n="c1p"></p>
+      </article>
+      <article class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6 18.4 18.4"/></svg></div>
+        <h4 data-i18n="c2t"></h4>
+        <p data-i18n="c2p"></p>
+      </article>
+      <article class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="16.5" cy="12" r="2.6" fill="currentColor" stroke="none"/></svg></div>
+        <h4 data-i18n="c3t"></h4>
+        <p data-i18n="c3p"></p>
+      </article>
+      <article class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m16.5 11.5 2 2 4-4"/></svg></div>
+        <h4 data-i18n="c4t"></h4>
+        <p data-i18n="c4p"></p>
+      </article>
+      <article class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.4 7.5L3 20.5l1.5-5.1A8.5 8.5 0 1 1 20.5 11.5Z"/></svg></div>
+        <h4 data-i18n="c5t"></h4>
+        <p data-i18n="c5p"></p>
+      </article>
+      <article class="card reveal">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4.5"/><circle cx="8.4" cy="8.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="15.6" cy="8.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.15" fill="currentColor" stroke="none"/><circle cx="8.4" cy="15.6" r="1.15" fill="currentColor" stroke="none"/><circle cx="15.6" cy="15.6" r="1.15" fill="currentColor" stroke="none"/></svg></div>
+        <h4 data-i18n="c6t"></h4>
+        <p data-i18n="c6p"></p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= 加入指南 ================= -->
+  <section class="sec wrap">
+    <div class="reveal">
+      <span class="kicker" data-i18n="s5k"></span>
+      <h3 data-i18n="s5t"></h3>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <span class="num">01</span>
+        <h4 data-i18n="g1t"></h4>
+        <p data-i18n="g1p"></p>
+      </div>
+      <div class="step reveal">
+        <span class="num">02</span>
+        <h4 data-i18n="g2t"></h4>
+        <p data-i18n="g2p"></p>
+      </div>
+      <div class="step reveal">
+        <span class="num">03</span>
+        <h4 data-i18n="g3t"></h4>
+        <p data-i18n="g3p"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 互推 bot ================= -->
+  <section class="sec wrap">
+    <div class="reveal">
+      <span class="kicker" data-i18n="s6k"></span>
+      <h3 data-i18n="s6t"></h3>
+      <p class="lead" data-i18n="s6p"></p>
+    </div>
+  </section>
+
+  <!-- ================= 语言声明 ================= -->
+  <section class="sec wrap">
+    <div class="reveal">
+      <span class="kicker" data-i18n="s7k"></span>
+      <h3 data-i18n="s7t"></h3>
+    </div>
+    <div class="langnote reveal">
+      <span class="zh">简体中文 only</span>
+      <h4 data-i18n="s7h"></h4>
+      <p data-i18n="s7p"></p>
+    </div>
+  </section>
+
+  <!-- ================= 相关链接 ================= -->
+  <section class="sec wrap">
+    <div class="reveal">
+      <span class="kicker" data-i18n="s8k"></span>
+      <h3 data-i18n="s8t"></h3>
+    </div>
+
+    <div class="links reveal">
+      <a class="linkrow" href="https://t.me/cifangstudio/11" target="_blank" rel="noopener noreferrer">
+        <span class="em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></span><span data-i18n="l1"></span><code>t.me/cifangstudio/11</code>
+        <svg class="arr" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+      <a class="linkrow" href="https://t.me/waterchisato_bot" target="_blank" rel="noopener noreferrer">
+        <span class="em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="4"/><path d="M12 4.6V8"/><circle cx="12" cy="3.4" r="1.3"/><circle cx="9.2" cy="13.6" r="1.25" fill="currentColor" stroke="none"/><circle cx="14.8" cy="13.6" r="1.25" fill="currentColor" stroke="none"/><path d="M9.5 17h5"/><path d="M2 12.5v3"/><path d="M22 12.5v3"/></svg></span><span data-i18n="l2"></span><code>@waterchisato_bot</code>
+        <svg class="arr" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+      <a class="linkrow" href="https://t.me/ss_tghzxcbot" target="_blank" rel="noopener noreferrer">
+        <span class="em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><path d="M7.7 7.7a6.2 6.2 0 0 0 0 8.6"/><path d="M16.3 16.3a6.2 6.2 0 0 0 0-8.6"/><path d="M4.9 4.9a10 10 0 0 0 0 14.2"/><path d="M19.1 19.1a10 10 0 0 0 0-14.2"/></svg></span><span data-i18n="l3"></span><code>@ss_tghzxcbot</code>
+        <svg class="arr" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+      <a class="linkrow" href="https://t.me/shuishui_tghz/32" target="_blank" rel="noopener noreferrer">
+        <span class="em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/></svg></span><span data-i18n="l4"></span><code>t.me/shuishui_tghz/32</code>
+        <svg class="arr" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+      <a class="linkrow" href="https://t.me/shuishui_tghz/35" target="_blank" rel="noopener noreferrer">
+        <span class="em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.2 13.8a4.5 4.5 0 0 0 6.4 0l2.4-2.4a4.5 4.5 0 1 0-6.4-6.4l-1.2 1.2"/><path d="M13.8 10.2a4.5 4.5 0 0 0-6.4 0l-2.4 2.4a4.5 4.5 0 1 0 6.4 6.4l1.2-1.2"/></svg></span><span data-i18n="l5"></span><code>t.me/shuishui_tghz/35</code>
+        <svg class="arr" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section class="cta-wrap wrap" id="use">
+    <div class="cta reveal">
+      <h3 data-i18n="ctaT"></h3>
+      <p data-i18n="ctaP"></p>
+
+      <div class="btn-row">
+        <a class="btn primary" href="https://t.me/shuishui_tghzbot" target="_blank" rel="noopener noreferrer">
+          <span data-i18n="btn"></span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+        </a>
+        <a class="btn ghost" href="https://t.me/waterchisato_bot" target="_blank" rel="noopener noreferrer">
+          <span data-i18n="btn2"></span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+        </a>
+      </div>
+
+      <div class="hint">
+        <span><span data-i18n="hint"></span><code>@shuishui_tghzbot</code></span>
+        <span><span data-i18n="hint2"></span><code>@waterchisato_bot</code></span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="dotline"></div>
+    <div data-i18n="foot1"></div>
+    <div data-i18n="foot2"></div>
+  </div>
+</footer>
+
+<div class="langpick" id="langPick">
+  <button class="langbtn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="Language">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.9 2.6 15.1 0 18M12 3c-2.6 2.9-2.6 15.1 0 18"/></svg>
+    <span class="lbl" id="langLabel">中文</span>
+    <svg class="caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 15 6-6 6 6"/></svg>
+  </button>
+  <div class="langmenu" id="langMenu" role="listbox"></div>
+</div>
+
+<script>
+/* ==========================================================
+   1. 界面文案（5 种语言：简体中文 / English / 한국어 / 日本語 / Русский）
+   ========================================================== */
+const I18N = {
+"zh-CN":{
+  label:"简体中文",
+  title:"全平台互助 · 水水版互助",
+  h1:"全平台互助 · 水水版互助网站上线啦",
+  hero:"在这里申请加入互助，也可以直接使用互助。<br>网站上线后，不用再翻聊天记录找链接了。",
+  badge:"互助 bot 仅提供简体中文",
+  chip1:"全平台互助", chip2:"双向机器人", chip3:"人工审核", chip4:"不强制挂 bot",
+  scroll:"往下滑看看",
+  s1k:"先说说这是什么", s1t:"全平台互助",
+  s1p:"看到喜欢的互助项目，点一下对应链接就能直接启动使用。记得编号的话，用频道顶部的搜索功能输入序号，就能瞬间定位到目标内容。",
+  s2k:"申请要求", s2t:"想加入，先满足这三条",
+  r1:"需要挂出「互助链接」或「互助机器人」。",
+  r2:"需要有完善的入群检查，包括 Rose，以及一些复杂的入群 bot。",
+  r3:"需要确保群内的聊天不涉及色情、政治、令人不适的内容。",
+  warn:"我们不欢迎色情、政治、黑灰产内容！！",
+  s3k:"群规与公告", s3t:"申请前先把群规准备好",
+  s3p:"群主在提交申请时，必须把自己群里的「群规 / 公告」提交给管理员。需要添加公告的，具体请查看最新要求；如果懒得搞，那就默认上模板。",
+  s4k:"我们这边的情况", s4t:"不吹，就是这几条",
+  c1t:"双向机器人", c1p:"申请加入走 @waterchisato_bot，它是一个双向机器人。",
+  c2t:"不强制挂 bot", c2p:"不要求强制把互助 bot 添加进群内，也不强制移除群里功能相同的 bot。",
+  c3t:"互推完全自愿", c3p:"添加互推 bot 是自愿项，加或不加都不会影响排序和推流。",
+  c4t:"人工审核", c4p:"走人工审核。满足要求后按提示提交申请，等待审核通过就可以和大家一起玩了。",
+  c5t:"有问题能找到人", c5p:"遇到链接失效或者无法使用的情况，可以在 @waterchisato_bot 里反馈。",
+  c6t:"纯序号随机", c6p:"互推机器人内部是纯序号随机，没有暗箱。如果一直没看到你，只能说是运气不好。",
+  s5k:"加入指南", s5t:"三步走完",
+  g1t:"使用互助功能", g1p:"看到喜欢的互助项目，直接点击对应链接就能轻松启动使用。记得特定编号的话，善用频道顶部的搜索功能。",
+  g2t:"申请加入我们", g2p:"先点击链接认真阅读我们的要求和规范，满足要求后按照提示提交申请，等待审核通过。",
+  g3t:"遇到问题", g3p:"链接失效或者无法使用时，在 @waterchisato_bot 里反馈。也请大家共同维护良好的互助环境，遵守频道规则。",
+  s6k:"关于互推 bot", s6t:"@ss_tghzxcbot",
+  s6p:"将它添加到群组 / 频道中，可以不定时对群聊或频道进行推广。<b>注意：此项为自愿项</b>，添加或不添加不会影响排序、推流。机器人内部是纯序号随机，如果一直没看到你，只能说运气不好。",
+  s7k:"关于语言", s7t:"说清楚：这个 bot 只有简体中文",
+  s7h:"互助 bot 与申请流程，只提供简体中文",
+  s7p:"本站界面支持 <b>简体中文 / English / 日本語 / 한국어 / Русский</b> 切换，但互助 bot、申请审核、频道内容<b>全部只有简体中文</b>。如果你看不懂中文，用起来会比较吃力——这一点先说在前面，免得白跑一趟。",
+  s8k:"相关链接", s8t:"可能用得上的几个链接",
+  l1:"加入指南与要求规范", l2:"提交互助申请", l3:"互推 / 宣传 bot",
+  l4:"互推的定时方案", l5:"有类似的互推 bot 怎么做",
+  ctaT:"看完了，那就开始吧", ctaP:"使用互助，点下面的按钮。要提交申请，可以联系 @waterchisato_bot，或者在互助机器人内使用 <code>/add</code> 指令进行人工审核。",
+  btn:"使用 bot", btn2:"提交申请",
+  hint:"使用互助 · ", hint2:"申请加入 · ",
+  foot1:"由 水水 维护 · 全平台互助",
+  foot2:"本页与 Telegram 官方没有关系，Telegram 是 Telegram FZ-LLC 的商标。"
+},
+"en":{
+  label:"English",
+  title:"Cross-Platform Mutual Aid · 水水 edition",
+  h1:"Cross-Platform Mutual Aid · the 水水 edition site is live",
+  hero:"Apply to join the mutual-aid network here, or just use it directly.<br>Now that the site exists, no more digging through chat history for links.",
+  badge:"The bot is Simplified Chinese only",
+  chip1:"Cross-platform", chip2:"Two-way bot", chip3:"Manual review", chip4:"No forced bot",
+  scroll:"Scroll down",
+  s1k:"What this is", s1t:"Cross-platform mutual aid",
+  s1p:"See a mutual-aid project you like? One tap on its link starts it right away. Remember the number? Type it into the search at the top of the channel and you'll jump straight to it.",
+  s2k:"Requirements", s2t:"Three things before you can join",
+  r1:"You need to display a mutual-aid link or a mutual-aid bot.",
+  r2:"You need solid join checks in place — including Rose and more complex join bots.",
+  r3:"You must make sure chat in the group doesn't involve porn, politics, or anything unpleasant.",
+  warn:"No porn, no politics, no shady business here!!",
+  s3k:"Rules & announcements", s3t:"Get your group rules ready first",
+  s3p:"When applying, the group owner must submit their own group rules / announcement to the admins. Need to add an announcement? Check the latest requirements — or if you can't be bothered, just use the default template.",
+  s4k:"How we run things", s4t:"No fluff, just these",
+  c1t:"Two-way bot", c1p:"Applications go through @waterchisato_bot, which is a two-way bot.",
+  c2t:"No forced bot", c2p:"You're not required to add the mutual-aid bot to your group, and you're not forced to remove an existing bot that does the same thing.",
+  c3t:"Sharing is optional", c3p:"Adding the promo bot is entirely voluntary — it has no effect on ranking or reach.",
+  c4t:"Manual review", c4p:"Applications are reviewed by a human. Meet the requirements, submit as instructed, and wait for approval — then you're in.",
+  c5t:"Problems reach a person", c5p:"If a link is dead or won't work, report it in @waterchisato_bot.",
+  c6t:"Plain random draw", c6p:"The promo bot picks by plain sequence number — no back room. If it never shows you, it's just bad luck.",
+  s5k:"How to join", s5t:"Three steps, that's all",
+  g1t:"Use the mutual aid", g1p:"Tap the link of a project you like and it just works. Remember the number? Use the search at the top of the channel.",
+  g2t:"Apply to join us", g2p:"First read our requirements and rules carefully, then submit your application as instructed and wait for approval.",
+  g3t:"Something went wrong", g3p:"Report dead or unusable links in @waterchisato_bot. And please help keep this a decent place — follow the channel rules.",
+  s6k:"The promo bot", s6t:"@ss_tghzxcbot",
+  s6p:"Add it to a group or channel and it can promote you from time to time. <b>Note: this is optional</b> — adding it or not won't affect ranking or reach. The bot picks by plain sequence number. If it never shows you, that's just luck.",
+  s7k:"About language", s7t:"To be clear: this bot is Simplified Chinese only",
+  s7h:"The bot and the whole application process are Simplified Chinese only",
+  s7p:"This page can be viewed in <b>简体中文 / English / 日本語 / 한국어 / Русский</b>, but the mutual-aid bot, the review process and the channel content are <b>all in Simplified Chinese only</b>. If you can't read Chinese, it'll be rough — better to know now than to waste a trip.",
+  s8k:"Links", s8t:"A few links you might need",
+  l1:"Joining guide & requirements", l2:"Submit an application", l3:"Promo / broadcast bot",
+  l4:"Promotion schedule", l5:"Already have a similar promo bot?",
+  ctaT:"All read? Let's start", ctaP:"To use the mutual aid, tap the button below. To apply, contact @waterchisato_bot, or send <code>/add</code> inside the mutual-aid bot for a manual review.",
+  btn:"Use the bot", btn2:"Apply to join",
+  hint:"Mutual aid · ", hint2:"Application · ",
+  foot1:"Maintained by 水水 · Cross-Platform Mutual Aid",
+  foot2:"This page isn't affiliated with Telegram. Telegram is a trademark of Telegram FZ-LLC."
+},
+"ja":{
+  label:"日本語",
+  title:"全平台互助 · 水水版 互助サイト",
+  h1:"全平台互助 · 水水版 互助サイトが公開されました",
+  hero:"ここから互助への参加申請ができ、そのまま互助を使うこともできます。<br>サイトができたので、もう履歴からリンクを探す必要はありません。",
+  badge:"互助 bot は簡体字中国語のみ",
+  chip1:"全平台互助", chip2:"双方向ボット", chip3:"人力審査", chip4:"bot 追加の強制なし",
+  scroll:"下にスクロール",
+  s1k:"まず、これは何か", s1t:"全平台互助",
+  s1p:"気に入った互助プロジェクトがあれば、そのリンクを押すだけで使えます。番号を覚えているなら、チャンネル上部の検索に番号を入れるとすぐに見つかります。",
+  s2k:"申請要件", s2t:"参加するには、まずこの三つ",
+  r1:"「互助リンク」または「互助 bot」を掲示していること。",
+  r2:"Rose を含む、しっかりした入群チェック（複雑な入群 bot など）があること。",
+  r3:"グループ内の会話が、ポルノ・政治・不快な内容を含まないことを保証できること。",
+  warn:"ポルノ・政治・グレーな商売はお断りします！！",
+  s3k:"ルールと告知", s3t:"申請前にグループルールを用意",
+  s3p:"申請の際、グループ管理者は自分のグループの「ルール／告知」を管理者に提出する必要があります。告知の追加が必要なら最新の要件を確認してください。面倒なら既定のテンプレートを使って構いません。",
+  s4k:"うちの運用について", s4t:"誇張なし、この数点だけ",
+  c1t:"双方向ボット", c1p:"参加申請は @waterchisato_bot から。これは双方向ボットです。",
+  c2t:"bot 追加の強制なし", c2p:"互助 bot をグループに入れる必要はありませんし、同じ機能の bot を外す必要もありません。",
+  c3t:"互推は完全に任意", c3p:"互推 bot の追加は任意です。追加してもしなくても順位や配信に影響しません。",
+  c4t:"人力審査", c4p:"審査は人が行います。要件を満たしたうえで案内どおり申請し、承認されれば一緒に遊べます。",
+  c5t:"困ったら人がいる", c5p:"リンクが切れている、使えない場合は @waterchisato_bot で報告してください。",
+  c6t:"純粋な番号ランダム", c6p:"互推 bot は内部で単純な番号ランダムです。ずっと表示されないなら、それは運が悪いだけです。",
+  s5k:"参加ガイド", s5t:"三ステップ",
+  g1t:"互助を使う", g1p:"気に入ったプロジェクトのリンクを押せば起動します。番号を覚えているならチャンネル上部の検索を活用しましょう。",
+  g2t:"参加を申請する", g2p:"まず要件と規範をよく読み、満たしていれば案内どおりに申請し、承認を待ちます。",
+  g3t:"困ったとき", g3p:"リンク切れや不具合は @waterchisato_bot で報告を。お互いに良い互助環境を守り、チャンネルのルールを守りましょう。",
+  s6k:"互推 bot について", s6t:"@ss_tghzxcbot",
+  s6p:"グループやチャンネルに追加すると、随時あなたのグループ／チャンネルを宣伝してくれます。<b>注意：これは任意です</b>。追加してもしなくても順位や配信には影響しません。内部は単純な番号ランダムで、ずっと表示されないなら運が悪いだけです。",
+  s7k:"言語について", s7t:"はっきり言うと、この bot は簡体字中国語のみです",
+  s7h:"互助 bot と申請の流れは、簡体字中国語のみ",
+  s7p:"このページは <b>簡体中文 / English / 日本語 / 한국어 / Русский</b> で表示できますが、互助 bot・申請審査・チャンネルの中身は<b>すべて簡体字中国語のみ</b>です。中国語が読めないとかなり厳しいので、先に言っておきますね。",
+  s8k:"関連リンク", s8t:"使うかもしれないリンク",
+  l1:"参加ガイドと要件", l2:"互助の申請を出す", l3:"互推／宣伝 bot",
+  l4:"互推のスケジュール", l5:"似たような互推 bot がある場合は",
+  ctaT:"読み終わったら、始めましょう", ctaP:"互助を使うなら下のボタンを。申請するなら @waterchisato_bot に連絡するか、互助ボット内で <code>/add</code> を送って人力審査を受けてください。",
+  btn:"bot を使う", btn2:"申請を出す",
+  hint:"互助を使う · ", hint2:"参加申請 · ",
+  foot1:"水水 が運営 · 全平台互助",
+  foot2:"このページは Telegram 公式とは関係ありません。Telegram は Telegram FZ-LLC の商標です。"
+},
+"ko":{
+  label:"한국어",
+  title:"전 플랫폼 互助 · 水水 버전",
+  h1:"전 플랫폼 互助 · 水水 버전 互助 사이트 오픈",
+  hero:"여기서 互助 참여를 신청할 수 있고, 바로 사용할 수도 있습니다.<br>사이트가 생겼으니 이제 채팅 기록에서 링크를 찾지 않아도 됩니다.",
+  badge:"互助 봇은 중국어 간체만 지원",
+  chip1:"전 플랫폼 互助", chip2:"양방향 봇", chip3:"수동 심사", chip4:"봇 강제 추가 없음",
+  scroll:"아래로 내려보세요",
+  s1k:"이게 뭔지부터", s1t:"전 플랫폼 互助",
+  s1p:"마음에 드는 互助 프로젝트를 보면 해당 링크를 누르는 것만으로 바로 시작됩니다. 번호를 기억하고 있다면 채널 상단 검색에 번호를 넣으면 바로 찾아집니다.",
+  s2k:"신청 요건", s2t:"참여하려면 우선 이 세 가지",
+  r1:"「互助 링크」 또는 「互助 봇」을 걸어 두어야 합니다.",
+  r2:"Rose를 포함한 제대로 된 입장 검사(복잡한 입장 봇 등)가 있어야 합니다.",
+  r3:"그룹 대화가 음란물·정치·불쾌한 내용을 다루지 않도록 보장해야 합니다.",
+  warn:"음란물·정치·불법 그레이존은 환영하지 않습니다!!",
+  s3k:"규칙과 공지", s3t:"신청 전에 그룹 규칙을 준비하세요",
+  s3p:"신청할 때 그룹 소유자는 자기 그룹의 「규칙／공지」를 관리자에게 제출해야 합니다. 공지를 추가해야 한다면 최신 요건을 확인하고, 귀찮으면 기본 템플릿을 그대로 써도 됩니다.",
+  s4k:"우리 운영 방식", s4t:"과장 없이, 이 몇 가지",
+  c1t:"양방향 봇", c1p:"참여 신청은 @waterchisato_bot로 합니다. 양방향 봇입니다.",
+  c2t:"봇 강제 추가 없음", c2p:"互助 봇을 그룹에 넣으라고 강요하지 않고, 같은 기능의 봇을 빼라고 강요하지도 않습니다.",
+  c3t:"互推는 완전 자율", c3p:"互推 봇 추가는 자율 항목입니다. 넣든 안 넣든 순위와 노출에 영향이 없습니다.",
+  c4t:"수동 심사", c4p:"심사는 사람이 합니다. 요건을 갖추고 안내대로 신청한 뒤 승인되면 함께 즐기면 됩니다.",
+  c5t:"문제가 생기면 사람이 있음", c5p:"링크가 죽었거나 작동하지 않으면 @waterchisato_bot에서 알려주세요.",
+  c6t:"순수 번호 랜덤", c6p:"互推 봇은 내부적으로 단순 번호 랜덤입니다. 뒷거래는 없습니다. 계속 안 보인다면 그건 그냥 운이 없는 것입니다.",
+  s5k:"참여 가이드", s5t:"세 단계",
+  g1t:"互助 사용하기", g1p:"마음에 드는 프로젝트의 링크를 누르면 바로 시작됩니다. 번호를 기억하면 채널 상단 검색을 활용하세요.",
+  g2t:"참여 신청하기", g2p:"먼저 요건과 규범을 꼼꼼히 읽고, 충족하면 안내대로 신청해 승인을 기다립니다.",
+  g3t:"문제가 생겼을 때", g3p:"링크 만료나 오류는 @waterchisato_bot에 알려주세요. 좋은 互助 환경을 함께 지키고 채널 규칙을 지켜주세요.",
+  s6k:"互推 봇 안내", s6t:"@ss_tghzxcbot",
+  s6p:"그룹이나 채널에 추가하면 수시로 당신의 그룹／채널을 홍보해 줍니다. <b>참고: 이건 자율 항목</b>이라 추가하든 안 하든 순위와 노출에 영향이 없습니다. 내부는 단순 번호 랜덤이고, 계속 안 보인다면 운이 없는 것입니다.",
+  s7k:"언어 안내", s7t:"분명히 말하면, 이 봇은 중국어 간체만 지원합니다",
+  s7h:"互助 봇과 신청 절차는 중국어 간체만 제공합니다",
+  s7p:"이 페이지는 <b>簡体中文 / English / 日本語 / 한국어 / Русский</b>로 볼 수 있지만, 互助 봇·신청 심사·채널 내용은 <b>모두 중국어 간체만</b>입니다. 중국어를 못 읽으면 꽤 힘들 테니 미리 말씀드립니다.",
+  s8k:"관련 링크", s8t:"필요할 만한 링크",
+  l1:"참여 가이드와 요건", l2:"互助 신청 제출", l3:"互推／홍보 봇",
+  l4:"互推 스케줄", l5:"비슷한 互推 봇이 있다면",
+  ctaT:"다 읽었으면 시작해 볼까요", ctaP:"互助를 쓰려면 아래 버튼을. 신청하려면 @waterchisato_bot에 연락하거나 互助 봇 안에서 <code>/add</code>를 보내 수동 심사를 받으세요.",
+  btn:"봇 사용하기", btn2:"신청 제출",
+  hint:"互助 사용 · ", hint2:"참여 신청 · ",
+  foot1:"水水 운영 · 전 플랫폼 互助",
+  foot2:"이 페이지는 Telegram 공식과 무관합니다. Telegram은 Telegram FZ-LLC의 상표입니다."
+},
+"ru":{
+  label:"Русский",
+  title:"全平台互助 · сайт взаимопомощи от 水水",
+  h1:"全平台互助 · сайт взаимопомощи от 水水 запущен",
+  hero:"Здесь можно подать заявку на участие во взаимопомощи — или сразу ею воспользоваться.<br>Сайт заработал, больше не нужно искать ссылки в истории чата.",
+  badge:"Бот только на упрощённом китайском",
+  chip1:"Кроссплатформенно", chip2:"Двусторонний бот", chip3:"Ручная проверка", chip4:"Бот не обязателен",
+  scroll:"Пролистайте вниз",
+  s1k:"Сначала — что это", s1t:"Кроссплатформенная взаимопомощь",
+  s1p:"Понравился проект взаимопомощи — одного нажатия на ссылку достаточно, чтобы им воспользоваться. Помните номер? Введите его в поиске сверху канала и сразу попадёте куда нужно.",
+  s2k:"Требования", s2t:"Чтобы вступить, нужно три вещи",
+  r1:"Нужно разместить ссылку взаимопомощи или бота взаимопомощи.",
+  r2:"Нужна надёжная проверка на входе — включая Rose и более сложных ботов проверки.",
+  r3:"Нужно гарантировать, что в чате группы нет порнографии, политики и неприятного контента.",
+  warn:"Порнографии, политики и серых схем здесь не рады!!",
+  s3k:"Правила и объявления", s3t:"Сначала подготовьте правила группы",
+  s3p:"При подаче заявки владелец группы обязан передать администратору правила и объявление своей группы. Нужно добавить объявление — посмотрите актуальные требования. А если лень, можно оставить шаблон по умолчанию.",
+  s4k:"Как у нас всё устроено", s4t:"Без прикрас, только это",
+  c1t:"Двусторонний бот", c1p:"Заявки идут через @waterchisato_bot — это двусторонний бот.",
+  c2t:"Бот не обязателен", c2p:"Добавлять бота взаимопомощи в группу не требуют, и убирать похожего бота тоже не заставляют.",
+  c3t:"互推 — полностью по желанию", c3p:"Добавлять бота взаимного продвижения — полностью по желанию: на рейтинг и охват это не влияет.",
+  c4t:"Ручная проверка", c4p:"Заявки рассматривает человек. Соответствуйте требованиям, отправьте всё по инструкции и дождитесь одобрения.",
+  c5t:"Есть к кому обратиться", c5p:"Если ссылка умерла или не работает, сообщите в @waterchisato_bot.",
+  c6t:"Чистый случайный номер", c6p:"Бот взаимного продвижения выбирает по простому порядковому номеру — никаких договорённостей. Если вас всё не показывают, просто не повезло.",
+  s5k:"Как вступить", s5t:"Три шага",
+  g1t:"Воспользоваться взаимопомощью", g1p:"Нажмите ссылку понравившегося проекта — и всё заработает. Помните номер? Используйте поиск сверху канала.",
+  g2t:"Подать заявку", g2p:"Сначала внимательно прочитайте требования и правила, затем отправьте заявку по инструкции и дождитесь одобрения.",
+  g3t:"Если что-то сломалось", g3p:"О неработающих или мёртвых ссылках пишите в @waterchisato_bot. И давайте вместе поддерживать нормальную атмосферу, соблюдая правила канала.",
+  s6k:"О боте взаимного продвижения", s6t:"@ss_tghzxcbot",
+  s6p:"Добавьте его в группу или канал — и он время от времени будет вас продвигать. <b>Важно: это по желанию</b>, добавление или отказ не влияют на рейтинг и охват. Внутри — простой случайный номер. Если вас всё не показывают, это просто невезение.",
+  s7k:"О языке", s7t:"Сразу уточним: этот бот только на упрощённом китайском",
+  s7h:"Бот и весь процесс подачи заявки — только на упрощённом китайском",
+  s7p:"Эту страницу можно смотреть на <b>簡体中文 / English / 日本語 / 한국어 / Русский</b>, но сам бот взаимопомощи, рассмотрение заявок и содержимое канала — <b>только на упрощённом китайском</b>. Если вы не читаете по-китайски, будет тяжело — лучше знать заранее.",
+  s8k:"Ссылки", s8t:"Ссылки, которые могут пригодиться",
+  l1:"Гайд по вступлению и требования", l2:"Подать заявку", l3:"Бот продвижения",
+  l4:"Расписание продвижения", l5:"А если у меня похожий бот продвижения?",
+  ctaT:"Прочитали? Тогда начинаем", ctaP:"Чтобы воспользоваться взаимопомощью, нажмите кнопку ниже. Для заявки напишите @waterchisato_bot или отправьте <code>/add</code> в боте взаимопомощи для ручной проверки.",
+  btn:"Открыть бота", btn2:"Подать заявку",
+  hint:"Взаимопомощь · ", hint2:"Заявка · ",
+  foot1:"Ведёт 水水 · 全平台互助",
+  foot2:"Эта страница не связана с Telegram. Telegram — товарный знак Telegram FZ-LLC."
+}
+};
+
+/* 只保留 5 种界面语言 */
+const LOCALES = [
+  ["zh-CN","简体中文",["zh","zh-cn","zh-hans","zh-sg","zh-my","zh-tw","zh-hk","zh-hant","zh-mo"]],
+  ["en","English",["en"]],
+  ["ja","日本語",["ja"]],
+  ["ko","한국어",["ko"]],
+  ["ru","Русский",["ru"]]
+];
+const MATCH = {};
+LOCALES.forEach(([code,,keys])=>keys.forEach(k=>MATCH[k]=code));
+
+const AUTO_LABEL = {
+  "zh-CN":"跟随系统","en":"Auto (system)","ja":"自動（システム）","ko":"자동(시스템)","ru":"Автоматически"
+};
+
+function detectLocaleRaw(){
+  const list = (navigator.languages && navigator.languages.length)
+    ? navigator.languages : [navigator.language || "en"];
+  for(const raw of list){
+    const l = String(raw).toLowerCase().replace("_","-");
+    if(MATCH[l]) return MATCH[l];
+    const hit = LOCALES.find(([, , keys])=>keys.includes(l.split("-")[0]));
+    if(hit) return hit[0];
+  }
+  return "en";
+}
+function detectLocale(){
+  const url = new URLSearchParams(location.search).get("lang");
+  if(url){
+    const u = url.toLowerCase().replace("_","-");
+    if(I18N[u]) return u;
+    const hit = LOCALES.find(([, , keys])=>keys.includes(u.split("-")[0]));
+    if(hit) return hit[0];
+  }
+  const saved = localStorage.getItem("hw-bot-lang");
+  if(saved && I18N[saved]) return saved;
+  return detectLocaleRaw();
+}
+
+/* ==========================================================
+   2. 应用语言
+   ========================================================== */
+const langLabel = document.getElementById("langLabel");
+let L = I18N.en, curLocale = "en";
+const t = k => (L[k] != null ? L[k] : (I18N.en[k] || ""));
+
+function applyLocale(code){
+  curLocale = code;
+  L = I18N[code] || I18N.en;
+
+  document.documentElement.lang = code;
+  document.title = t("title");
+  const md = document.getElementById("metaDesc");
+  if(md) md.setAttribute("content",
+    t("hero").replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    el.innerHTML = t(el.dataset.i18n);
+  });
+  langLabel.textContent = L.label || code;
+
+  /* 红色警告跑马灯：重复 6 次 × 2 组，实现无缝循环 */
+  const tk = document.getElementById("ticker");
+  if(tk) tk.innerHTML = new Array(12).fill("<span>" + t("warn") + "</span>").join("");
+
+  buildMenu();
+  try{ localStorage.setItem("hw-bot-lang", code); }catch(e){}
+}
+
+/* ==========================================================
+   3. 语言切换器
+   ========================================================== */
+const pick = document.getElementById("langPick");
+const btn  = document.getElementById("langBtn");
+const menu = document.getElementById("langMenu");
+
+function buildMenu(){
+  menu.innerHTML = LOCALES.map(([code,label])=>{
+    const cur = code === curLocale ? ' aria-current="true"' : "";
+    return `<button type="button" role="option" data-code="${code}"${cur}>${label}</button>`;
+  }).join("") + `<div class="sep"></div><button type="button" data-code="auto"><span class="autoitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.9 2.6 15.1 0 18M12 3c-2.6 2.9-2.6 15.1 0 18"/></svg>${AUTO_LABEL[curLocale] || "Auto"}</span></button>`;
+  menu.querySelectorAll("button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const code = b.dataset.code;
+      if(code === "auto"){
+        try{ localStorage.removeItem("hw-bot-lang"); }catch(e){}
+        applyLocale(detectLocaleRaw());
+      } else applyLocale(code);
+      closeMenu();
+    });
+  });
+}
+function openMenu(){ pick.classList.add("open"); btn.setAttribute("aria-expanded","true"); }
+function closeMenu(){ pick.classList.remove("open"); btn.setAttribute("aria-expanded","false"); }
+btn.addEventListener("click", e=>{
+  e.stopPropagation();
+  pick.classList.contains("open") ? closeMenu() : openMenu();
+});
+document.addEventListener("click", e=>{ if(!pick.contains(e.target)) closeMenu(); });
+document.addEventListener("keydown", e=>{ if(e.key === "Escape") closeMenu(); });
+
+/* ==========================================================
+   4. 「你好」轮播 / 进度条 / 滚动揭示
+   ========================================================== */
+const heroWords = ["你好","Hello","こんにちは","안녕하세요","Привет","你好","Hello"];
+const big = document.getElementById("helloBig");
+let hIdx = 0;
+setInterval(()=>{
+  hIdx = (hIdx + 1) % heroWords.length;
+  big.classList.remove("in");
+  big.classList.add("out");
+  setTimeout(()=>{
+    big.textContent = heroWords[hIdx];
+    big.classList.remove("out");
+    void big.offsetWidth;
+    big.classList.add("in");
+  }, 420);
+}, 2600);
+
+const bar = document.getElementById("bar");
+function tickProgress(){
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const p = h > 0 ? (window.scrollY / h) * 100 : 0;
+  bar.style.width = Math.min(100, Math.max(0, p)) + "%";
+}
+addEventListener("scroll", tickProgress, { passive:true });
+addEventListener("resize", tickProgress);
+tickProgress();
+
+const io = new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      const delay = Math.min(Array.from(es).indexOf(e) * 90, 360);
+      setTimeout(()=>e.target.classList.add("on"), delay);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold:.12, rootMargin:"0px 0px -6% 0px" });
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+
+applyLocale(detectLocale());
+</script>
+</body>
+</html>
