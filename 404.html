@@ -7,14 +7,16 @@
     <style>
         :root {
             --accent-blue: #0088cc;
-            --accent-cyan: #00d2ff;
-            --accent-glow: rgba(0, 210, 255, 0.35);
-            --bg-dark: #0b0f19;
-            --card-bg: rgba(18, 24, 38, 0.75);
+            --accent-cyan: #00e5ff;
+            --accent-purple: #8a2be2;
+            --bg-dark: #060913;
+            --card-bg: rgba(15, 22, 38, 0.65);
             --card-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f1f5f9;
+            --text-main: #f8fafc;
             --text-sub: #94a3b8;
-            --border-radius: 24px;
+            --border-radius: 28px;
+            --mouse-x: 50%;
+            --mouse-y: 50%;
         }
 
         * {
@@ -24,118 +26,303 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1.5rem;
+            padding: 2rem 1.25rem;
             position: relative;
             overflow: hidden;
+            user-select: none;
         }
 
-        /* 动态背景背景光圈 */
-        body::before, body::after {
-            content: '';
+        /* 科技感透视网格背景 */
+        .bg-grid {
             position: absolute;
-            width: 550px;
-            height: 550px;
-            border-radius: 50%;
-            filter: blur(140px);
-            z-index: -1;
-            opacity: 0.22;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(0, 210, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 210, 255, 0.04) 1px, transparent 1px);
+            background-size: 45px 45px;
+            mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+            z-index: -2;
             pointer-events: none;
         }
-        body::before {
-            background: #0088cc;
-            top: -100px;
-            left: -100px;
+
+        /* 动态呼吸流光球 */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(110px);
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.35;
+            animation: orbFloat 12s ease-in-out infinite alternate;
         }
-        body::after {
-            background: #7928ca;
-            bottom: -100px;
-            right: -100px;
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #0088cc, transparent 70%);
+            top: -150px;
+            left: -120px;
+        }
+        .orb-2 {
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, #7928ca, transparent 70%);
+            bottom: -150px;
+            right: -120px;
+            animation-delay: -6s;
+        }
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #00e5ff, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.12;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 30px) scale(1.12); }
         }
 
         .container {
-            max-width: 580px;
+            max-width: 560px;
             width: 100%;
             text-align: center;
+            perspective: 1000px;
         }
 
-        /* 404 玻璃大卡片 */
+        /* 404 玻璃拟态主卡片 */
         .error-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--border-radius);
-            padding: 3.5rem 2rem;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 136, 204, 0.15);
+            padding: 3rem 2.2rem 2.6rem;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 
+                0 25px 60px -15px rgba(0, 0, 0, 0.7),
+                0 0 40px rgba(0, 136, 204, 0.12),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15);
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
 
+        /* 鼠标跟随聚光灯效果 */
+        .error-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                500px circle at var(--mouse-x) var(--mouse-y),
+                rgba(0, 229, 255, 0.08),
+                transparent 40%
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 顶部高光流线 */
         .error-card::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
+            left: 10%;
+            right: 10%;
             height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), #7928ca, transparent);
+            opacity: 0.85;
         }
 
-        /* 动画元素：纸飞机偏航 */
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 顶部信号状态胶囊 */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.25);
+            color: #ff6b81;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.8rem;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #ff4757;
+            box-shadow: 0 0 8px #ff4757;
+            animation: blink 1.4s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(0.8); }
+        }
+
+        /* 雷达与纸飞机动画区 */
         .illustration {
             position: relative;
-            display: inline-block;
-            margin-bottom: 1.5rem;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 雷达波纹 */
+        .radar-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            animation: radarPulse 3.6s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+        }
+        .radar-ring:nth-child(2) { animation-delay: 1.2s; }
+        .radar-ring:nth-child(3) { animation-delay: 2.4s; }
+
+        /* 虚线环绕星轨 */
+        .orbit-ring {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px dashed rgba(0, 229, 255, 0.2);
+            animation: spin 18s linear infinite;
+        }
+
+        @keyframes radarPulse {
+            0% { transform: scale(0.45); opacity: 0.9; }
+            100% { transform: scale(1.35); opacity: 0; }
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 纸飞机主体圆盘 */
+        .plane-wrapper {
+            width: 74px;
+            height: 74px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, rgba(0, 136, 204, 0.25), rgba(0, 229, 255, 0.08));
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 30px rgba(0, 136, 204, 0.3), inset 0 0 15px rgba(0, 229, 255, 0.15);
+            animation: floatPlane 4s ease-in-out infinite;
+            position: relative;
         }
 
         .plane-icon {
-            width: 80px;
-            height: 80px;
+            width: 40px;
+            height: 40px;
             fill: url(#cyan-gradient);
-            filter: drop-shadow(0 10px 20px rgba(0, 210, 255, 0.4));
-            animation: floatPlane 4s ease-in-out infinite;
+            filter: drop-shadow(0 4px 12px rgba(0, 229, 255, 0.5));
         }
 
         @keyframes floatPlane {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-12px) rotate(-8deg);
-            }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-9px) rotate(-6deg); }
         }
 
-        /* 404 炫彩大标题 */
+        /* 404 炫彩立体大标题 */
+        .error-code-wrap {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 0.4rem;
+        }
+
         .error-code {
-            font-size: 5.5rem;
+            font-size: clamp(4.5rem, 14vw, 6.2rem);
             font-weight: 900;
             line-height: 1;
-            letter-spacing: -2px;
-            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+            letter-spacing: -3px;
+            background: linear-gradient(135deg, #ffffff 20%, #a5f3fc 55%, var(--accent-blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.8rem;
-            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            filter: drop-shadow(0 10px 25px rgba(0, 210, 255, 0.22));
+            position: relative;
         }
 
         .error-title {
-            font-size: 1.35rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: #ffffff;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .awa-tag {
+            display: inline-block;
+            font-size: 0.95rem;
+            padding: 0.1rem 0.55rem;
+            margin-left: 0.3rem;
+            border-radius: 8px;
+            background: rgba(0, 229, 255, 0.12);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            color: var(--accent-cyan);
+            font-weight: 600;
+            vertical-align: middle;
+            transition: transform 0.2s ease;
+        }
+
+        .error-card:hover .awa-tag {
+            transform: rotate(6deg) scale(1.06);
         }
 
         .error-desc {
             color: var(--text-sub);
             font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 2.5rem;
+            line-height: 1.7;
+            max-width: 420px;
+            margin: 0 auto 2rem;
+        }
+
+        /* 迷你诊断日志条（可点击彩蛋） */
+        .ping-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(6, 9, 19, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 0.55rem 1.1rem;
+            border-radius: 12px;
+            font-family: "JetBrains Mono", Consolas, monospace;
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ping-box:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            color: #cbd5e1;
+            background: rgba(0, 136, 204, 0.1);
+        }
+
+        .ping-code {
+            color: var(--accent-cyan);
         }
 
         /* 按钮组 */
@@ -147,41 +334,63 @@
         }
 
         .btn {
+            position: relative;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.6rem;
-            padding: 0.85rem 1.75rem;
-            border-radius: 14px;
+            padding: 0.9rem 1.8rem;
+            border-radius: 16px;
             font-weight: 600;
             font-size: 0.95rem;
             text-decoration: none;
             transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+            overflow: hidden;
         }
 
-        /* 主按钮 */
+        /* 主按钮 + 扫光特效 */
         .btn-primary {
-            background: linear-gradient(135deg, #0088cc 0%, #00aaff 100%);
+            background: linear-gradient(135deg, #0088cc 0%, #00c6ff 100%);
             color: #ffffff;
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+            box-shadow: 0 8px 20px -4px rgba(0, 136, 204, 0.55);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.55s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 140%;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #0099e6 0%, #1ab5ff 100%);
-            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.6);
+            box-shadow: 0 12px 26px -4px rgba(0, 198, 255, 0.65);
             transform: translateY(-2px);
+        }
+
+        .btn-primary:active, .btn-secondary:active {
+            transform: translateY(0) scale(0.98);
         }
 
         /* 次要按钮 */
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.12);
             color: var(--text-main);
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(0, 210, 255, 0.4);
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(0, 229, 255, 0.45);
+            box-shadow: 0 8px 20px -6px rgba(0, 229, 255, 0.2);
             transform: translateY(-2px);
         }
 
@@ -189,52 +398,147 @@
             width: 18px;
             height: 18px;
             fill: currentColor;
+            transition: transform 0.25s ease;
+        }
+
+        .btn-primary:hover .btn-icon {
+            transform: scale(1.12);
+        }
+
+        .btn-secondary:hover .btn-icon {
+            transform: translateX(-3px);
+        }
+
+        /* 页脚水印 */
+        .footer-note {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: rgba(148, 163, 184, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 480px) {
+            .error-card {
+                padding: 2.4rem 1.5rem 2rem;
+            }
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
+<div class="bg-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
 <div class="container">
-    <div class="error-card">
-        <!-- SVG 图标定义 -->
+    <div class="error-card" id="card">
+        <!-- SVG 渐变定义 -->
         <svg style="width:0;height:0;position:absolute;" aria-hidden="true">
             <defs>
                 <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#0088cc" />
-                    <stop offset="100%" stop-color="#00d2ff" />
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="40%" stop-color="#00e5ff" />
+                    <stop offset="100%" stop-color="#0088cc" />
                 </linearGradient>
             </defs>
         </svg>
 
-        <div class="illustration">
-            <!-- 偏航的 Telegram 纸飞机 SVG -->
-            <svg class="plane-icon" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.05-.75 4.12-1.79 6.87-2.97 8.25-3.54 3.92-1.63 4.73-1.92 5.26-1.93.12 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.16-.04.25z"/>
-            </svg>
-        </div>
+        <div class="card-content">
+            <!-- 状态指示器 -->
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                <span>ERR_SIGNAL_LOST · 节点失联</span>
+            </div>
 
-        <div class="error-code">404</div>
-        <h1 class="error-title">信号中断，页面失联 awa</h1>
-        <p class="error-desc">你访问的页面可能已经被移走、删除，或者该群聊互助链接已失效。</p>
+            <!-- 雷达与纸飞机 -->
+            <div class="illustration">
+                <div class="radar-ring"></div>
+                <div class="radar-ring"></div>
+                <div class="radar-ring"></div>
+                <div class="orbit-ring"></div>
+                <div class="plane-wrapper">
+                    <svg class="plane-icon" viewBox="0 0 24 24">
+                        <path d="M21.426 2.582a1.003 1.003 0 0 0-1.033-.17l-17.5 7.5a1.002 1.002 0 0 0 .06 1.865l4.94 1.647 1.98 5.939a1 1 0 0 0 1.71.337l2.684-3.132 4.355 3.266a1.001 1.001 0 0 0 1.579-.616l2.5-15.5a1 1 0 0 0-.275-.886zM9.82 12.927l7.152-6.13-5.41 7.213-.595 2.382-1.147-3.465z"/>
+                    </svg>
+                </div>
+            </div>
 
-        <div class="btn-group">
-            <a href="https://tghz.20110202.top/index.html" class="btn btn-primary">
-                <!-- 首页 Icon -->
-                <svg class="btn-icon" viewBox="0 0 24 24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                </svg>
-                返回展示名单
-            </a>
-            <a href="javascript:history.back()" class="btn btn-secondary">
-                <!-- 返回 Icon -->
-                <svg class="btn-icon" viewBox="0 0 24 24">
-                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-                </svg>
-                返回上一页
-            </a>
+            <!-- 404 主标题 -->
+            <div class="error-code-wrap">
+                <div class="error-code">404</div>
+            </div>
+
+            <h1 class="error-title">
+                信号中断，页面失联 <span class="awa-tag">awa</span>
+            </h1>
+
+            <p class="error-desc">
+                你访问的页面可能已经被移走、删除，或者该群聊互助链接已失效。纸飞机正在深空中努力搜寻返航坐标。
+            </p>
+
+            <!-- 交互小彩蛋：点击重新发射电波 -->
+            <div class="ping-box" id="pingBox" title="点击尝试重新呼叫">
+                <span class="ping-code">[电波诊断]</span>
+                <span id="pingText">点击发射探测脉冲...</span>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div class="btn-group">
+                <a href="https://tghz.20110202.top/index.html" class="btn btn-primary">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                    返回展示名单
+                </a>
+                <a href="javascript:history.back()" class="btn btn-secondary">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                    </svg>
+                    返回上一页
+                </a>
+            </div>
         </div>
     </div>
+
+    <div class="footer-note">
+        Telegram 群聊互助展示名单（水水版）
+    </div>
 </div>
+
+<script>
+    // 卡片鼠标聚光灯追踪
+    const card = document.getElementById('card');
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+    });
+
+    // 底部电波诊断点击小彩蛋
+    const pingBox = document.getElementById('pingBox');
+    const pingText = document.getElementById('pingText');
+    const messages = [
+        "正在呼叫水水卫星... 信号被黑洞吃掉啦 o(╥﹏╥)o",
+        "二次元电波重连中... 404 Not Found awa",
+        "搜寻结果：前方除了星尘什么都没有~",
+        "建议直接点击下方「返回展示名单」回家哦 ✨"
+    ];
+    let msgIndex = 0;
+
+    pingBox.addEventListener('click', () => {
+        pingText.textContent = "正在发送电波 Ping...";
+        setTimeout(() => {
+            pingText.textContent = messages[msgIndex];
+            msgIndex = (msgIndex + 1) % messages.length;
+        }, 350);
+    });
+</script>
 
 </body>
 </html>
