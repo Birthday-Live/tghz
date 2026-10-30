@@ -39,16 +39,9 @@
     "pt": "Telegram",
     "link": "https://t.me/+Jxc4V_1d7pBjZmU1"
   },
+  
   {
     "id": 5,
-    "groupName": "海栀子今天的饭堂（?",
-    "owner": "栀 海",
-    "type": "qz",
-    "pt": "Telegram",
-    "link": "https://t.me/+ya0xCcTMJVhmYThl"
-  },
-  {
-    "id": 6,
     "groupName": "水窝🎈",
     "owner": "Chisato",
     "type": "pd",
@@ -56,7 +49,7 @@
     "link": "https://t.me/waterchisato"
   },
   {
-    "id": 7,
+    "id": 6,
     "groupName": "防骗交流群",
     "owner": "Null",
     "type": "qz",
@@ -64,7 +57,7 @@
     "link": "https://qm.qq.com/q/jF0iE2Z7Mc"
   },
   {
-    "id": 8,
+    "id": 7,
     "groupName": "次放studio",
     "owner": "次放studio",
     "type": "pd",
@@ -72,7 +65,7 @@
     "link": "https://whatsapp.com/channel/0029Vb8qAM76BIEcQz0AiE2n"
   },
   {
-    "id": 9,
+    "id": 8,
     "groupName": "星愿漂流瓶",
     "owner": "Plana",
     "type": "qz",
@@ -80,7 +73,7 @@
     "link": "https://t.me/+cgJiXpAppKs3ZDdh"
   },
   {
-    "id": 10,
+    "id": 9,
     "groupName": "基沃托斯联邦综合理事会",
     "owner": "Plana",
     "type": "qz",
@@ -88,7 +81,7 @@
     "link": "https://qm.qq.com/q/zBznCT1MZk"
   },
   {
-    "id": 11,
+    "id": 10,
     "groupName": "阿b评论精选",
     "owner": "demandianeeding",
     "type": "pd",
@@ -96,7 +89,7 @@
     "link": "https://t.me/quickReviewOfBilibili"
   },
 {
-    "id": 12,
+    "id": 11,
     "groupName": "干饭六组",
     "owner": "花 花花",
     "type": "qz",
@@ -104,7 +97,7 @@
     "link": "https://t.me/+hzYnUl8euNowYzU1"
 },
 {
-    "id": 13,
+    "id": 12,
     "groupName": "互助宣传bot",
     "owner": "互助官方",
     "type": "bot",
@@ -112,7 +105,7 @@
     "link": "https://t.me/ss_tghzxcbot"
 },
 {
-    "id": 14,
+    "id": 13,
     "groupName": "萌萌人之家•二世",
     "owner": "MELLOW",
     "type": "qz",
@@ -120,7 +113,7 @@
     "link": "https://t.me/+QO_N0vqPXkExZDA1"
 },
 {
-    "id": 15,
+    "id": 14,
     "groupName": "🙃",
     "owner": "TI-OJIEHb",
     "type": "qz",
